@@ -1,0 +1,28 @@
+! -----------------------------------------------------------------------
+! INTEL CORPORATION MAKES NO WARRANTY OF ANY KIND WITH REGARD TO THIS
+! MATERIAL, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+! MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+! INTEL CORPORATION ASSUMES NO RESPONSIBILITY FOR ANY ERRORS THAT MAY
+! APPEAR IN THIS DOCUMENT. INTEL CORPORATION MAKES NO COMMITMENT TO
+! UPDATE NOR TO KEEP CURRENT THE INFORMATION CONTAINED IN THIS DOCUMENT.
+! -----------------------------------------------------------------------
+!(ASM) creation date: Fri Feb 02 17:03:14 2007
+!
+!F   ! make board initialization
+!F   batch "c:/Program Files/Intel/SDT2.0.1/xflash/../xflash//IMOTE2.xdb"
+!F   flash "open configuration 'xflashtemp.fcf'"
+!F   ! start burning
+!F   flash "burn flash true true false"
+!(ASM) 0x00000000: B         PC+28                 $00000024
+!(SRC)  startup_s\@line 84
+!(ASM) 0x00000000: B         PC+28                 $00000024 ___DWFUNC0 + 0x001C
+!(ASM) 0x00000000: B         PC+28                 $00000024
+!(ASM) 0x00000000: B         PC+28                 $00000024
+!(EVA)    Memory Successfully Burned.   
+!F   ! verify to be sure everything is right
+!F   if @strcmp( "false", "true")==0
+!  then
+!    flash "verify flash true false"
+!  end
+!F   flash "close configuration"
+!F   close protfile

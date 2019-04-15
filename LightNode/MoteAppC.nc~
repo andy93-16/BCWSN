@@ -1,0 +1,21 @@
+#include <Timer.h>
+#include "RadioMsg.h"
+ 
+configuration MoteAppC {
+}
+implementation {
+  
+  components MainC;
+  components new AMSenderC(RADIO_MSG);
+  components ActiveMessageC;
+  components MoteC as App;
+  components new TimerMilliC() as Timer0;
+
+ 
+   App.Boot -> MainC;
+   App.AMSend -> AMSenderC;
+   App.Timer0 -> Timer0;
+   App.AMPacket -> ActiveMessageC;
+   App.AMControl -> ActiveMessageC;
+ }
+ 

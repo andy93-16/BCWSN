@@ -1,0 +1,27 @@
+COMPONENT=Bob
+
+#change the packet length to 102 bytes
+MSG_SIZE=102
+
+##########################################
+#          choose sensor                 #
+##########################################
+
+#MICAz
+#CFLAGS+=-DMICA
+
+#TelosB
+#CFLAGS+=-DTELOSB
+
+#Imote2
+CFLAGS+=-DIMOTE2
+
+###########################################
+#          choose curve parameter         #
+###########################################
+ 
+CFLAGS+=-DSECP160R1
+
+include ../Makerules
+
+

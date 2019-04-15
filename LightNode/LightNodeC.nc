@@ -1,0 +1,122 @@
+module LightNodeC {
+   uses interface Boot;
+   uses interface AMSend as AMTipsReqMsg;
+   uses interface AMSend as AMSendTipMsg;
+   uses interface Receive as AMTipsRespMsg;
+   uses interface Packet;
+   uses interface SplitControl as AMControl;
+   uses interface Timer<TMilli> as delta_tip;
+   uses interface Timer<TMilli> as delta_measure;   
+   uses interface Read<uint16_t> as Read;
+   uses interface Leds;
+
+}
+implementation{
+
+  message_t pkt;
+  int16_t measures[LENGTH_MEASURES];
+  uint8_t count_measures = 0;
+  bool makeTip_running = FALSE;
+
+  void setLeds(uint16_t val) {
+    if (val & 0x01)
+      call Leds.led0On();
+    else 
+      call Leds.led0Off();
+    if (val & 0x02)
+      call Leds.led1On();
+    else
+      call Leds.led1Off();
+    if (val & 0x04)
+      call Leds.led2On();
+    else
+      call Leds.led2Off();
+  }
+  
+  task void makeTip(){
+    call delta_measure.startPeriodic(DELTA_MEASURE);
+  }
+
+  void makeTipsRequest(){
+      TipsRequestMsg* trmpkt = (TipsRequestMsg*)(call Packet.getPayload(&pkt, sizeof(TipsRequestMsg)));
+      if (trmpkt == NULL) {
+	return;
+      }
+      trmpkt->nodeid = TOS_NODE_ID;
+      //
+      trmpkt->temp=measures[0];
+      //
+      if (call AMTipsReqMsg.send(AM_BROADCAST_ADDR,&pkt, sizeof(TipsRequestMsg)) == SUCCESS) {
+         setLeds(0);
+         makeTip_running=FALSE;
+          
+      }    
+  }
+
+  uint16_t processTips(uint16_t hash_1,uint16_t hash_2){}
+
+  void sendNewTip(uint16_t a){
+      SendTipMsg* stmpkt = (SendTipMsg*)(call Packet.getPayload(&pkt, sizeof(SendTipMsg)));
+      if (stmpkt == NULL) {
+	return;
+      }
+      stmpkt->tipHash=a;
+      if (call AMSendTipMsg.send(AM_BROADCAST_ADDR,&pkt, sizeof(SendTipMsg)) == SUCCESS) {
+      }    
+  }
+  
+  event void Boot.booted(){
+    call AMControl.start();
+  }
+
+  event void AMControl.startDone(error_t err){
+    if (err == SUCCESS) {
+        call delta_tip.startPeriodic(DELTA_TIP);
+    }
+    else {
+      call AMControl.start();
+    }
+  }
+
+  event void AMControl.stopDone(error_t err){}
+
+  event void delta_tip.fired(){
+    if(!makeTip_running){
+      post makeTip();
+      setLeds(7);
+      makeTip_running=TRUE;
+    }   
+  }
+  
+
+  event void delta_measure.fired(){
+      if(count_measures!=LENGTH_MEASURES){
+        call Read.read();
+        count_measures++;
+      }
+      else { 
+        call delta_measure.stop();
+        makeTipsRequest();  
+      }
+  }
+
+  event void Read.readDone( error_t result, uint16_t val ){
+   if (result == SUCCESS)
+        measures[count_measures]=val;
+        
+  }
+
+  event void AMSendTipMsg.sendDone(message_t *msg, error_t error){
+  } 
+  event void AMTipsReqMsg.sendDone(message_t *msg, error_t error){
+  }
+  
+  event message_t* AMTipsRespMsg.receive(message_t* msg, void* payload, uint8_t len){
+    if (len == sizeof(TipsResponseMsg)) {
+      TipsResponseMsg* trempkt = (TipsResponseMsg*)payload;
+      uint16_t hash=processTips(1,1); 
+      sendNewTip(hash);   
+    }
+    return msg;
+  }
+}

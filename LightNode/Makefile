@@ -1,0 +1,25 @@
+COMPONENT=LightNodeAppC
+BUILD_EXTRA_DEPS=TipsRequestMsg.class
+CLEAN_EXTRA = *.class TipsRequestMsg.java
+
+TipsRequestMsg.class:TipsRequestMsg.java
+	javac -target 1.4 -source 1.4 *.java
+
+TipsResponseMsg.class:TipsResponseMsg.java
+	javac -target 1.4 -source 1.4 *.java
+
+SendTipMsgMsg.class: $(wildcard *.java) SendTipMsg.java
+	javac -target 1.4 -source 1.4 *.java
+
+CFLAGS += -I$(TOSDIR)/lib/T2Hack
+
+TipsRequestMsg.java:	
+	mig java -target=null $(CFLAGS) -java-classname=TipsRequestMsg LightNode.h TipsRequestMsg -o $@
+
+TipsResponseMsg.java:	
+	mig java -target=null $(CFLAGS) -java-classname=TipsResponseMsg LightNode.h TipsResponseMsg -o $@
+
+SendTipMsgMsg.java:	
+	mig java -target=null $(CFLAGS) -java-classname=SendTipMsg LightNode.h SendTipMsg -o $@
+
+include $(MAKERULES)

@@ -1,0 +1,45 @@
+module MoteC {
+   uses interface Boot;
+   uses interface AMSend;
+   uses interface AMPacket;
+   uses interface SplitControl as AMControl;
+   uses interface Timer<TMilli> as Timer0;  
+   uses interface Read<uint16_t> as Read;
+
+}
+implementation{
+
+  message_t pkt;
+
+  event void Boot.booted(){
+    call AMControl.start();
+  }
+  
+  event void AMControl.startDone(error_t err){
+    if (err == SUCCESS) {
+      call Timer0.startPeriodic(TIMER_PERIOD_MILLI);
+    }
+    else {
+      call AMControl.start();
+    }
+  }
+
+  event void AMControl.stopDone(error_t err){
+  }
+
+  event void Timer0.fired(){
+    RadioMsg* btrpkt = call AMSend.getPayload(&pkt,sizeof(RadioMsg));
+    btrpkt->nodeid = TOS_NODE_ID;
+    call Read.read();  
+    call AMSend.send(AM_BROADCAST_ADDR, &pkt, sizeof(RadioMsg));
+  }
+  event void Read.readDone( error_t result, uint16_t val ){
+   if (result == SUCCESS)
+       {RadioMsg* btrpkt = call AMSend.getPayload(&pkt,sizeof(RadioMsg));
+        btrpkt->temperature = val;
+        dbg("Read",val);}     
+  }
+
+  event void AMSend.sendDone(message_t *msg, error_t error){}
+
+  }

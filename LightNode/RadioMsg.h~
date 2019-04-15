@@ -1,0 +1,12 @@
+ #ifndef RADIOMSG_H
+ #define RADIOMSG_H
+ 
+enum {
+   TIMER_PERIOD_MILLI = 250,
+   RADIO_MSG=1
+ };
+typedef nx_struct RadioMsg {
+  nx_uint16_t nodeid;
+} RadioMsg;
+ 
+ #endif
