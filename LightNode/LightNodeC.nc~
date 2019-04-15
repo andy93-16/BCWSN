@@ -43,7 +43,9 @@ implementation{
 	return;
       }
       trmpkt->nodeid = TOS_NODE_ID;
+      //
       trmpkt->temp=measures[0];
+      //
       if (call AMTipsReqMsg.send(AM_BROADCAST_ADDR,&pkt, sizeof(TipsRequestMsg)) == SUCCESS) {
          setLeds(0);
          makeTip_running=FALSE;
