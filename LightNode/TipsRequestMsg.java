@@ -7,12 +7,12 @@
 public class TipsRequestMsg extends net.tinyos.message.Message {
 
     /** The default size of this message type in bytes. */
-    public static final int DEFAULT_MESSAGE_SIZE = 4;
+    public static final int DEFAULT_MESSAGE_SIZE = 6;
 
     /** The Active Message type associated with this message. */
     public static final int AM_TYPE = 10;
 
-    /** Create a new TipsRequestMsg of size 4. */
+    /** Create a new TipsRequestMsg of size 6. */
     public TipsRequestMsg() {
         super(DEFAULT_MESSAGE_SIZE);
         amTypeSet(AM_TYPE);
@@ -160,9 +160,9 @@ public class TipsRequestMsg extends net.tinyos.message.Message {
 
     /////////////////////////////////////////////////////////
     // Accessor methods for field: temp
-    //   Field type: int, unsigned
+    //   Field type: long, unsigned
     //   Offset (bits): 16
-    //   Size (bits): 16
+    //   Size (bits): 32
     /////////////////////////////////////////////////////////
 
     /**
@@ -194,31 +194,31 @@ public class TipsRequestMsg extends net.tinyos.message.Message {
     }
 
     /**
-     * Return the value (as a int) of the field 'temp'
+     * Return the value (as a long) of the field 'temp'
      */
-    public int get_temp() {
-        return (int)getUIntBEElement(offsetBits_temp(), 16);
+    public long get_temp() {
+        return (long)getUIntBEElement(offsetBits_temp(), 32);
     }
 
     /**
      * Set the value of the field 'temp'
      */
-    public void set_temp(int value) {
-        setUIntBEElement(offsetBits_temp(), 16, value);
+    public void set_temp(long value) {
+        setUIntBEElement(offsetBits_temp(), 32, value);
     }
 
     /**
      * Return the size, in bytes, of the field 'temp'
      */
     public static int size_temp() {
-        return (16 / 8);
+        return (32 / 8);
     }
 
     /**
      * Return the size, in bits, of the field 'temp'
      */
     public static int sizeBits_temp() {
-        return 16;
+        return 32;
     }
 
 }

@@ -7,13 +7,13 @@ module LightNodeC {
    uses interface SplitControl as AMControl;
    uses interface Timer<TMilli> as delta_tip;
    uses interface Timer<TMilli> as delta_measure;   
-   uses interface Read<int16_t> as Read;
+   uses interface Read<uint16_t> as Read;
 
 }
 implementation{
 
   message_t pkt;
-  int16_t measures[10];
+  uint16_t measures[10];
   uint8_t num_measure;
   bool busy = FALSE;
   
@@ -71,7 +71,7 @@ implementation{
     }
   }
 
-  event void Read.readDone( error_t result, int16_t val ){
+  event void Read.readDone( error_t result, uint16_t val ){
    if (result == SUCCESS)
       {
         measures[num_measure]=val;
@@ -87,7 +87,7 @@ implementation{
     if (len == sizeof(AM_TipsRespMsg)) {
       AM_TipsRespMsg* trempkt = (AM_TipsRespMsg*)payload;
       //setLeds(trempkt->counter);
-      sendNewTip(processTips());     
+      //sendNewTip(processTips());     
     }
     return msg;
   }

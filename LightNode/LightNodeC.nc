@@ -1,20 +1,21 @@
 module LightNodeC {
-   uses interface Boot;
-   uses interface AMSend as AMTipsReqMsg;
-   uses interface AMSend as AMSendTipMsg;
-   uses interface Receive as AMTipsRespMsg;
-   uses interface Packet;
-   uses interface SplitControl as AMControl;
-   uses interface Timer<TMilli> as delta_tip;
-   uses interface Timer<TMilli> as delta_measure;   
-   uses interface Read<uint16_t> as Read;
-   uses interface Leds;
-
+uses {
+       interface Boot;
+       interface AMSend as AMTipsReqMsg;
+       interface AMSend as AMSendTipMsg;
+       interface Receive as AMTipsRespMsg;
+       interface Packet;
+       interface SplitControl as AMControl;
+       interface Timer<TMilli> as delta_tip;
+       interface Timer<TMilli> as delta_measure;   
+       interface Read<uint16_t> as Temp;
+       interface Leds;
+     }
 }
 implementation{
 
   message_t pkt;
-  int16_t measures[LENGTH_MEASURES];
+  uint16_t measures[];
   uint8_t count_measures = 0;
   bool makeTip_running = FALSE;
 
@@ -38,14 +39,16 @@ implementation{
   }
 
   void makeTipsRequest(){
+      int i;
       TipsRequestMsg* trmpkt = (TipsRequestMsg*)(call Packet.getPayload(&pkt, sizeof(TipsRequestMsg)));
       if (trmpkt == NULL) {
 	return;
       }
       trmpkt->nodeid = TOS_NODE_ID;
       //
-      trmpkt->temp=measures[0];
-      //fh
+      for(i=0;i<LENGTH_MEASURES;i++)
+      trmpkt->temp[i]=measures[i];
+      //
       if (call AMTipsReqMsg.send(AM_BROADCAST_ADDR,&pkt, sizeof(TipsRequestMsg)) == SUCCESS) {
          setLeds(0);
          makeTip_running=FALSE;
@@ -90,20 +93,23 @@ implementation{
   
 
   event void delta_measure.fired(){
-      if(count_measures!=LENGTH_MEASURES){
-        call Read.read();
-        count_measures++;
+      if(count_measures<LENGTH_MEASURES){
+        call Temp.read();
       }
       else { 
         call delta_measure.stop();
+        count_measures=0;
         makeTipsRequest();  
       }
   }
 
-  event void Read.readDone( error_t result, uint16_t val ){
-   if (result == SUCCESS)
+  event void Temp.readDone( error_t result, uint16_t val ){
+     if (result == SUCCESS){
+        count_measures++;
+        setLeds(count_measures);
         measures[count_measures]=val;
         
+     }
   }
 
   event void AMSendTipMsg.sendDone(message_t *msg, error_t error){

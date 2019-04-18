@@ -14,8 +14,11 @@ implementation {
   components LightNodeC as App;
   components new TimerMilliC() as Timer0;
   components new TimerMilliC() as Timer1;
-  components new DemoSensorC() as Sensor;
- 
+  components new SensirionSht11C() as TempHumSensor;
+  //components new HamamatsuS10871TsrC() as LightSensor;
+  //components new VoltageC() as Battery;    
+   
+   App.Temp -> TempHumSensor.Temperature;  
    App.Boot -> MainC;
    App.Leds -> LedsC;
    App.AMTipsReqMsg -> AMTipsReqMsg;
@@ -25,6 +28,5 @@ implementation {
    App.Packet -> ActiveMessageC;
    App.delta_measure -> Timer1;
    App.AMControl -> ActiveMessageC;
-   App.Read -> Sensor;
  }
  

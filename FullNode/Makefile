@@ -1,7 +1,5 @@
-COMPONENT=SinkC
-CFLAGS += -DCC2420_NO_ACKNOWLEDGEMENTS
-CFLAGS += -DCC2420_NO_ADDRESS_RECOGNITION
-CFLAGS += -DTASKLET_IS_TASK
+INITIAL_TARGETS = FullNode.class FullNode.java
 
-include $(MAKERULES)
+ROOT = ../../../support/sdk/java
+include $(ROOT)/Makefile.include
 

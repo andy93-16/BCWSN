@@ -5,16 +5,14 @@ enum {
   AM_TIPSREQUESTMSG=10,
   AM_TIPSRESPONSEMSG=11,
   AM_SENDTIPMSG=12,  
-  DELTA_TIP = 3000,
+  DELTA_TIP = 5000,
   DELTA_MEASURE=250,
   LENGTH_MEASURES=10
 };
 
 typedef nx_struct TipsRequestMsg {
   nx_uint16_t nodeid;
-  //test
-  nx_uint16_t temp;
-  //
+  nx_uint16_t temp[LENGTH_MEASURES];
 } TipsRequestMsg;
 
 typedef nx_struct TipsResponseMsg {
