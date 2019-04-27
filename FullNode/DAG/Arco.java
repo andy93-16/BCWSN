@@ -1,6 +1,4 @@
-package BCWSN.FullNode; 
-
-
+package DAG;
 /**
   * La classe arco serve per rappresentare un arco del grafo
   */

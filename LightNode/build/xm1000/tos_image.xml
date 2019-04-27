@@ -1,12 +1,12 @@
 <tos_image>
   <ident>
-    <uidhash>384F9599L</uidhash>
-    <hostname>DebTos</hostname>
+    <uidhash>291ACD46L</uidhash>
     <username>tinyos</username>
-    <appname>LightNodeAppC</appname>
-    <userhash>3ED7B65EL</userhash>
-    <timestamp>5CB81BD6L</timestamp>
     <deluge_support>no</deluge_support>
+    <userhash>04291321L</userhash>
+    <appname>LightNodeAppC</appname>
+    <timestamp>5CC49870L</timestamp>
+    <hostname>debian</hostname>
     <platform>xm1000</platform>
   </ident>
   <image format="ihex">

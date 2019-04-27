@@ -1,5 +1,6 @@
-package BCWSN.FullNode;
+package DAG;
 
+import java.util.*;
 
  /**
   * La classe DAG rappresenta un grafo diretto aciclico mediante liste di adiacenza.
@@ -154,35 +155,35 @@ public class DAG extends Grafo {
 		System.out.println("metodo da implementare");	  
 	}
 
-	public static void main(String[] args) {
-		    DAG g = new DAG();
-		    g.add(new ArcoOrdinato("e","d",new Integer(1)));
-		    g.add(new ArcoOrdinato("d","f",new Integer(1)));
-		    g.add(new ArcoOrdinato("d","b",new Integer(3)));
-		    g.add(new ArcoOrdinato("d","c",new Integer(4)));
-		    g.add(new ArcoOrdinato("b","c",new Integer(2)));
+//	public static void main(String[] args) {
+//		    DAG g = new DAG();
+//		    g.add(new ArcoOrdinato("e","d",new Integer(1)));
+//		    g.add(new ArcoOrdinato("d","f",new Integer(1)));
+//		    g.add(new ArcoOrdinato("d","b",new Integer(3)));
+//		    g.add(new ArcoOrdinato("d","c",new Integer(4)));
+//		    g.add(new ArcoOrdinato("b","c",new Integer(2)));
 
-		    System.out.println("Il grafo G e':\n" + g);
-		    System.out.println("L'insieme di archi e': " + g.getEdgeSet());
+//		    System.out.println("Il grafo G e':\n" + g);
+//		    System.out.println("L'insieme di archi e': " + g.getEdgeSet());
 
-		    System.out.println(g.getTopologicalOrder());
-		    System.out.println();
+//		    System.out.println(g.getTopologicalOrder());
+//		    System.out.println();
 
-		    //g2 contiene un ciclo	
-		    DAG g2 = new DAG();
-		    g2.add(new ArcoOrdinato("e","d",new Integer(1)));
-		    g2.add(new ArcoOrdinato("d","f",new Integer(1)));
-		    g2.add(new ArcoOrdinato("d","b",new Integer(3)));
-		    g2.add(new ArcoOrdinato("c","d",new Integer(4)));
-		    g2.add(new ArcoOrdinato("b","c",new Integer(2)));
+//		    //g2 contiene un ciclo	
+//		    DAG g2 = new DAG();
+//		    g2.add(new ArcoOrdinato("e","d",new Integer(1)));
+//		    g2.add(new ArcoOrdinato("d","f",new Integer(1)));
+//		    g2.add(new ArcoOrdinato("d","b",new Integer(3)));
+//		    g2.add(new ArcoOrdinato("c","d",new Integer(4)));
+//		    g2.add(new ArcoOrdinato("b","c",new Integer(2)));
 
-		    System.out.println("Il grafo G2 e':\n" + g2);
-		    System.out.println("L'insieme di archi e': " + g2.getEdgeSet());
+//		    System.out.println("Il grafo G2 e':\n" + g2);
+//		    System.out.println("L'insieme di archi e': " + g2.getEdgeSet());
 
-		    System.out.println(g2.getTopologicalOrder());
-		    System.out.println();
-		    
-		  }
+//		    System.out.println(g2.getTopologicalOrder());
+//		    System.out.println();
+//		    
+//		  }
 	
 	
 	

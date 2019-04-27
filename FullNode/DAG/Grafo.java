@@ -1,9 +1,6 @@
-package BCWSN.FullNode;
+package DAG;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
  /**
   * La classe Grafo rappresenta un grafo mediante liste di adiacenza.
@@ -207,20 +204,20 @@ public class Grafo {
     return out.toString();
   }
   
-  public static void main(String[] args) {
-	    Arco a = new Arco();
-	    Grafo g = new Grafo();
-	    g.add("a","b",new Integer(1));
-	    g.add("a","c",new Integer(1));
-	    g.add("a","e",new Integer(3));
-	    g.add("c","d",new Integer(4));
-	    g.add("c","e",new Integer(2));
-	    g.add("b","d",new Integer(3));
+//  public static void main(String[] args) {
+//	    Arco a = new Arco();
+//	    Grafo g = new Grafo();
+//	    g.add("a","b",new Integer(1));
+//	    g.add("a","c",new Integer(1));
+//	    g.add("a","e",new Integer(3));
+//	    g.add("c","d",new Integer(4));
+//	    g.add("c","e",new Integer(2));
+//	    g.add("b","d",new Integer(3));
 
-	    System.out.println("Il grafo G e':\n" + g);
-	    System.out.println("L'insieme di archi e': " + g.getEdgeSet());
+//	    System.out.println("Il grafo G e':\n" + g);
+//	    System.out.println("L'insieme di archi e': " + g.getEdgeSet());
 
-	  }
+//	  }
 
   
 }

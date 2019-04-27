@@ -7,12 +7,12 @@
 public class TipsRequestMsg extends net.tinyos.message.Message {
 
     /** The default size of this message type in bytes. */
-    public static final int DEFAULT_MESSAGE_SIZE = 6;
+    public static final int DEFAULT_MESSAGE_SIZE = 22;
 
     /** The Active Message type associated with this message. */
     public static final int AM_TYPE = 10;
 
-    /** Create a new TipsRequestMsg of size 6. */
+    /** Create a new TipsRequestMsg of size 22. */
     public TipsRequestMsg() {
         super(DEFAULT_MESSAGE_SIZE);
         amTypeSet(AM_TYPE);
@@ -88,7 +88,11 @@ public class TipsRequestMsg extends net.tinyos.message.Message {
         s += "  [nodeid=0x"+Long.toHexString(get_nodeid())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
-        s += "  [temp=0x"+Long.toHexString(get_temp())+"]\n";
+        s += "  [temp=";
+        for (int i = 0; i < 10; i++) {
+          s += "0x"+Long.toHexString(getElement_temp(i) & 0xffff)+" ";
+        }
+        s += "]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       return s;
     }
@@ -160,9 +164,9 @@ public class TipsRequestMsg extends net.tinyos.message.Message {
 
     /////////////////////////////////////////////////////////
     // Accessor methods for field: temp
-    //   Field type: long, unsigned
+    //   Field type: int[], unsigned
     //   Offset (bits): 16
-    //   Size (bits): 32
+    //   Size of each element (bits): 16
     /////////////////////////////////////////////////////////
 
     /**
@@ -173,52 +177,117 @@ public class TipsRequestMsg extends net.tinyos.message.Message {
     }
 
     /**
-     * Return whether the field 'temp' is an array (false).
+     * Return whether the field 'temp' is an array (true).
      */
     public static boolean isArray_temp() {
-        return false;
+        return true;
     }
 
     /**
      * Return the offset (in bytes) of the field 'temp'
      */
-    public static int offset_temp() {
-        return (16 / 8);
+    public static int offset_temp(int index1) {
+        int offset = 16;
+        if (index1 < 0 || index1 >= 10) throw new ArrayIndexOutOfBoundsException();
+        offset += 0 + index1 * 16;
+        return (offset / 8);
     }
 
     /**
      * Return the offset (in bits) of the field 'temp'
      */
-    public static int offsetBits_temp() {
+    public static int offsetBits_temp(int index1) {
+        int offset = 16;
+        if (index1 < 0 || index1 >= 10) throw new ArrayIndexOutOfBoundsException();
+        offset += 0 + index1 * 16;
+        return offset;
+    }
+
+    /**
+     * Return the entire array 'temp' as a int[]
+     */
+    public int[] get_temp() {
+        int[] tmp = new int[10];
+        for (int index0 = 0; index0 < numElements_temp(0); index0++) {
+            tmp[index0] = getElement_temp(index0);
+        }
+        return tmp;
+    }
+
+    /**
+     * Set the contents of the array 'temp' from the given int[]
+     */
+    public void set_temp(int[] value) {
+        for (int index0 = 0; index0 < value.length; index0++) {
+            setElement_temp(index0, value[index0]);
+        }
+    }
+
+    /**
+     * Return an element (as a int) of the array 'temp'
+     */
+    public int getElement_temp(int index1) {
+        return (int)getUIntBEElement(offsetBits_temp(index1), 16);
+    }
+
+    /**
+     * Set an element of the array 'temp'
+     */
+    public void setElement_temp(int index1, int value) {
+        setUIntBEElement(offsetBits_temp(index1), 16, value);
+    }
+
+    /**
+     * Return the total size, in bytes, of the array 'temp'
+     */
+    public static int totalSize_temp() {
+        return (160 / 8);
+    }
+
+    /**
+     * Return the total size, in bits, of the array 'temp'
+     */
+    public static int totalSizeBits_temp() {
+        return 160;
+    }
+
+    /**
+     * Return the size, in bytes, of each element of the array 'temp'
+     */
+    public static int elementSize_temp() {
+        return (16 / 8);
+    }
+
+    /**
+     * Return the size, in bits, of each element of the array 'temp'
+     */
+    public static int elementSizeBits_temp() {
         return 16;
     }
 
     /**
-     * Return the value (as a long) of the field 'temp'
+     * Return the number of dimensions in the array 'temp'
      */
-    public long get_temp() {
-        return (long)getUIntBEElement(offsetBits_temp(), 32);
+    public static int numDimensions_temp() {
+        return 1;
     }
 
     /**
-     * Set the value of the field 'temp'
+     * Return the number of elements in the array 'temp'
      */
-    public void set_temp(long value) {
-        setUIntBEElement(offsetBits_temp(), 32, value);
+    public static int numElements_temp() {
+        return 10;
     }
 
     /**
-     * Return the size, in bytes, of the field 'temp'
+     * Return the number of elements in the array 'temp'
+     * for the given dimension.
      */
-    public static int size_temp() {
-        return (32 / 8);
-    }
-
-    /**
-     * Return the size, in bits, of the field 'temp'
-     */
-    public static int sizeBits_temp() {
-        return 32;
+    public static int numElements_temp(int dimension) {
+      int array_dims[] = { 10,  };
+        if (dimension < 0 || dimension >= 1) throw new ArrayIndexOutOfBoundsException();
+        if (array_dims[dimension] == 0) throw new IllegalArgumentException("Array dimension "+dimension+" has unknown size");
+        return array_dims[dimension];
     }
 
 }
