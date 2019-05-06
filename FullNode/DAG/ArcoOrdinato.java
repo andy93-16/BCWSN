@@ -1,4 +1,5 @@
 package DAG;
+
 /**
  * Rappresenta un arco ordinato, estende la classe Arco
  * Per convenzione node1 e' il nodo da cui parte l'arco (from),

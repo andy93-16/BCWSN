@@ -1,9 +1,12 @@
 package DAG;
+
+import java.lang.*;
+
 /**
   * La classe arco serve per rappresentare un arco del grafo
   */
 
-public class Arco implements Comparable {
+public class Arco implements Comparable{
 
  	
   protected Object node1, node2;

@@ -1,9 +1,9 @@
-import DAG.*;
+
 import java.util.*;
 import net.tinyos.message.*;
 import net.tinyos.packet.*;
 import net.tinyos.util.*;
-
+import DAG.*;
 public class FullNode implements net.tinyos.message.MessageListener {
 
   private MoteIF moteIF;
@@ -75,7 +75,7 @@ public class FullNode implements net.tinyos.message.MessageListener {
       Message m = (Message)msgs.nextElement();
       fn.addMsgType(m);
     }
-     fn.start();wrhtw
+     fn.start();
   }
 
 
