@@ -1,9 +1,5 @@
 import DAG.*;
-
-import MsgClass.*;
-
 import java.util.*;
-
 import net.tinyos.message.*;
 import net.tinyos.packet.*;
 import net.tinyos.util.*;

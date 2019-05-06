@@ -1,4 +1,4 @@
-INITIAL_TARGETS = DAG.class DAG.java
+FINAL_TARGETS= DAG
 
 ROOT = ../../../../support/sdk/java
 
