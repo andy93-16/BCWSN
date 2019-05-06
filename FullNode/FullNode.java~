@@ -38,6 +38,8 @@ public class FullNode implements net.tinyos.message.MessageListener {
   
   public static void main(String[] args) throws Exception 
   {
+    TipsRequestMsg trm = new TipsRequestMsg();
+    System.out.println("AM_Type = " + trm.AM_TYPE);
     String[] msgClasses = {"MsgClass.TipsRequestMsg"};
     String[] allArgs = new String[args.length + msgClasses.length];
     for (int i = 0; i < args.length; i++) 
