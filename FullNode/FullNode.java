@@ -4,6 +4,7 @@ import net.tinyos.packet.*;
 import net.tinyos.util.*;
 import DAG.*;
 import MsgClass.*;
+
 public class FullNode implements net.tinyos.message.MessageListener 
 {
   private int TIPS_REQUEST_AMTYPE = 10;
@@ -30,12 +31,8 @@ public class FullNode implements net.tinyos.message.MessageListener
   public void messageReceived(int to, Message message) 
   {
     long t = System.currentTimeMillis();
-<<<<<<< HEAD
     //Date d = new Date(t);
     System.out.print("" + t + ": ");
-    if(message.amType()==10)
-     {}
-=======
     Date d = new Date(t);
     System.out.print("" + d + ": ");
     System.out.println("Ricevuto un messaggio da: " + to);
@@ -73,7 +70,6 @@ public class FullNode implements net.tinyos.message.MessageListener
     //5) Aggiungi il blocco al DAG
     //6) Notifica il mote della nuova Difficoltà (se cambiata) necessaria per i suoi Tip successivi
     }
->>>>>>> ea6ede33f1bb479f004dc6937aa52adeefab58c5
   }
 
 
@@ -97,11 +93,8 @@ public class FullNode implements net.tinyos.message.MessageListener
   
   public static void main(String[] args) throws Exception 
   {
-<<<<<<< HEAD
-    String[] msgClasses = {"MsgClass.TipsRequestMsg","MsgClass.SendTipMsg","MsgClass.TipsResponseMsg"};
-=======
+
     String[] msgClasses = {"MsgClass.TipsRequestMsg", "MsgClass.TipsResponseMsg", "MsgClass.SendTipMsg"};
->>>>>>> ea6ede33f1bb479f004dc6937aa52adeefab58c5
     String[] allArgs = new String[args.length + msgClasses.length];
     for (int i = 0; i < args.length; i++) 
     {

@@ -85,7 +85,7 @@ public class TipsRequestMsg extends net.tinyos.message.Message {
      * message type name and the non-indexed field values.
      */
     public String toString() {
-      String s = "QUESTO MESSAGGIO E' DI TIPO: <TipsRequestMsg> \n";
+      String s = "Message <TipsRequestMsg> \n";
       try {
         s += "  [nodeid=0x"+Long.toHexString(get_nodeid())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
