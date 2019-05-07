@@ -4,8 +4,13 @@ import net.tinyos.packet.*;
 import net.tinyos.util.*;
 import DAG.*;
 import MsgClass.*;
-public class FullNode implements net.tinyos.message.MessageListener {
-
+public class FullNode implements net.tinyos.message.MessageListener 
+{
+  private int TIPS_REQUEST_AMTYPE = 10;
+  private int SEND_TIP_AMTYPE = 12;
+  
+  private DAG dag;
+  
   private MoteIF moteIF;
   
   public FullNode(String source) throws Exception {
@@ -17,17 +22,70 @@ public class FullNode implements net.tinyos.message.MessageListener {
     }
   }
 
-  public void start() {
+  public void start() 
+  {
+  
   }
   
-  public void messageReceived(int to, Message message) {
+  public void messageReceived(int to, Message message) 
+  {
     long t = System.currentTimeMillis();
+<<<<<<< HEAD
     //Date d = new Date(t);
     System.out.print("" + t + ": ");
     if(message.amType()==10)
      {}
+=======
+    Date d = new Date(t);
+    System.out.print("" + d + ": ");
+    System.out.println("Ricevuto un messaggio da: " + to);
+    System.out.println("Il messaggio arrivato è: " + message.amType());
+    
+    if(message.amType() == TIPS_REQUEST_AMTYPE)
+    {
+    	//The mote is requesting for the DAG Tips to attach the measures to
+    	System.out.println("And here I am!!!");
+    	
+    	int[] tips = getTips();
+    	TipsResponseMsg sendMe = new TipsResponseMsg(); //Add here the DAG TIPS as object parameters
+    	//sendMe.addTips(tips); //Or something similar
+    	try
+    	{
+    		moteIF.send(to, (Message) sendMe);
+    	}
+    	catch(Exception e)
+    	{
+    		System.out.println("Errore nella creazione del messaggio da inviare: " + e);
+    	}
+    }
+    else if(message.amType() == SEND_TIP_AMTYPE)
+    {
+    //The mote has sent its measures to add to the DAG
+    byte[] measures = message.dataGet();
+    //TODO:
+    //1) Decifra le misure
+    //2) Se la decifratura NON è ok -> DROP MESSAGE, fiducia molto in negativo
+    //3a) Se la decifratura è ok -> continua
+    //3b) Controlla che l'hash del blocco coincida con le misure ricevute
+    //3c) Se non corrisponde -> DROP MESSAGE, fiducia in negativo
+    //3d) Se tutto ok -> continua, fiducia in positivo
+    //4) Crea un nuovo Tip con le info necessarie per il blocco
+    //5) Aggiungi il blocco al DAG
+    //6) Notifica il mote della nuova Difficoltà (se cambiata) necessaria per i suoi Tip successivi
+    }
+>>>>>>> ea6ede33f1bb479f004dc6937aa52adeefab58c5
   }
 
+
+  /**
+    * Asks the DAG for the last 2 tips enabled to be attached by a new Tip
+    * TODO: implement this the right way
+    */
+  private static int[] getTips()
+  {
+//  	dag.getTip();
+  }
+  
   
   private static void usage() {
     System.err.println("usage: MsgReader [-comm <source>] message-class [message-class ...]");
@@ -39,7 +97,11 @@ public class FullNode implements net.tinyos.message.MessageListener {
   
   public static void main(String[] args) throws Exception 
   {
+<<<<<<< HEAD
     String[] msgClasses = {"MsgClass.TipsRequestMsg","MsgClass.SendTipMsg","MsgClass.TipsResponseMsg"};
+=======
+    String[] msgClasses = {"MsgClass.TipsRequestMsg", "MsgClass.TipsResponseMsg", "MsgClass.SendTipMsg"};
+>>>>>>> ea6ede33f1bb479f004dc6937aa52adeefab58c5
     String[] allArgs = new String[args.length + msgClasses.length];
     for (int i = 0; i < args.length; i++) 
     {
@@ -88,9 +150,10 @@ public class FullNode implements net.tinyos.message.MessageListener {
     }
     //FineParteCaricamentoMessaggi
     FullNode fn = new FullNode(source);
-    DAG dag = new DAG();
+    dag = new DAG();
     Enumeration msgs = v.elements();
-    while (msgs.hasMoreElements()) {
+    while (msgs.hasMoreElements()) 
+    {
       Message m = (Message)msgs.nextElement();
       fn.addMsgType(m);
     }
