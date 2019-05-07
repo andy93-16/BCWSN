@@ -10,7 +10,7 @@ LENGTH_MEASURES=10
 };
 typedef nx_struct TipsRequestMsg {
 nx_uint16_t nodeid;
-nx_uint16_t temp[LENGTH_MEASURES];
+//nx_uint16_t temp[LENGTH_MEASURES];
 } TipsRequestMsg;
 typedef nx_struct TipsResponseMsg {
 nx_uint16_t tipHash_1;

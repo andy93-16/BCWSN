@@ -46,8 +46,8 @@ implementation{
       }
       trmpkt->nodeid = TOS_NODE_ID;
       //
-      for(i=0;i<LENGTH_MEASURES;i++)
-      trmpkt->temp[i]=measures[i];
+      //for(i=0;i<LENGTH_MEASURES;i++)
+      //trmpkt->temp[i]=measures[i];
       //
       if (call AMTipsReqMsg.send(AM_BROADCAST_ADDR,&pkt, sizeof(TipsRequestMsg)) == SUCCESS) {
          setLeds(0);

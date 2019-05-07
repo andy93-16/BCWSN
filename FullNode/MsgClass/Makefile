@@ -1,25 +1,17 @@
 LIGHTNODE_H= $(TOSROOT)/apps/BCWSN/LightNode/LightNode.h
 
-BUILD_EXTRA_DEPS = TipsRequestMsg.class TipsResponseMsg.class SendTipMsg.class
+TOS=$(shell ncc -print-tosdir)
 
-CLEAN_EXTRA= *.java *.class
-
-TipsRequestMsg.java:
-	mig java -java-classname=MsgClass.TipsRequestMsg $(LIGHTNODE_H) TipsRequestMsg -o $@
-
-TipsResponseMsg.java:
-	mig java -java-classname=MsgClass.TipsResponseMsg $(LIGHTNODE_H) TipsResponseMsg -o $@
+TipsRequestMsg.java: $(LIGHTNODE_H) FORCE
+	mig -o $@ -java-classname=MsgClass.TipsRequestMsg java $(LIGHTNODE_H) TipsRequestMsg -I$(TOSDIR)/types
+	
+TipsResponseMsg.java: $(LIGHTNODE_H) FORCE
+	mig -o $@ -java-classname=MsgClass.TipsResponseMsg java $(LIGHTNODE_H) TipsResponseMsg -I$(TOSDIR)/types
 
 SendTipMsg.java:
-	mig java -java-classname=MsgClass.SendTipMsg $(LIGHTNODE_H) SendTipMsg -o $@
+	mig -o $@ -java-classname=MsgClass.SendTipMsg java $(LIGHTNODE_H) SendTipMsg -I$(TOSDIR)/types
 
-TipsRequestMsg.class: $(wildcard *.java) TipsRequestMsg.java
-	javac TipsRequestMsg.java
 
-TipsResponseMsg.class:$(wildcard *.java) TipsResponseMsg.java
-	javac TipsResponseMsg.java
+ROOT = ../../../../support/sdk/java
 
-SendTipMsg.class:$(wildcard *.java) SendTipMsg.java
-	javac SendTipMsg.java
-
-include $(MAKERULES)
+include $(ROOT)/Makefile.include

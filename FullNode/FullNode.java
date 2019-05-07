@@ -22,9 +22,10 @@ public class FullNode implements net.tinyos.message.MessageListener {
   
   public void messageReceived(int to, Message message) {
     long t = System.currentTimeMillis();
-    //    Date d = new Date(t);
+    //Date d = new Date(t);
     System.out.print("" + t + ": ");
-    System.out.println(message);
+    if(message.amType()==10)
+     {}
   }
 
   
@@ -38,7 +39,7 @@ public class FullNode implements net.tinyos.message.MessageListener {
   
   public static void main(String[] args) throws Exception 
   {
-    String[] msgClasses = {"MsgClass.TipsRequestMsg"};
+    String[] msgClasses = {"MsgClass.TipsRequestMsg","MsgClass.SendTipMsg","MsgClass.TipsResponseMsg"};
     String[] allArgs = new String[args.length + msgClasses.length];
     for (int i = 0; i < args.length; i++) 
     {
@@ -85,7 +86,7 @@ public class FullNode implements net.tinyos.message.MessageListener {
       usage();
       System.exit(1);
     }
-
+    //FineParteCaricamentoMessaggi
     FullNode fn = new FullNode(source);
     DAG dag = new DAG();
     Enumeration msgs = v.elements();
@@ -93,7 +94,6 @@ public class FullNode implements net.tinyos.message.MessageListener {
       Message m = (Message)msgs.nextElement();
       fn.addMsgType(m);
     }
-     fn.start();
   }
 
 

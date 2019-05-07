@@ -1,4 +1,4 @@
-SUBDIRS = DAG
+SUBDIRS = DAG MsgClass
 
 FINAL_TARGETS= FullNode.java
 
