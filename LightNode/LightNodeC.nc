@@ -44,11 +44,6 @@ implementation{
       if (trmpkt == NULL) {
 	return;
       }
-      trmpkt->nodeid = TOS_NODE_ID;
-      //
-      //for(i=0;i<LENGTH_MEASURES;i++)
-      //trmpkt->temp[i]=measures[i];
-      //
       if (call AMTipsReqMsg.send(AM_BROADCAST_ADDR,&pkt, sizeof(TipsRequestMsg)) == SUCCESS) {
          setLeds(0);
          makeTip_running=FALSE;
@@ -120,8 +115,10 @@ implementation{
   event message_t* AMTipsRespMsg.receive(message_t* msg, void* payload, uint8_t len){
     if (len == sizeof(TipsResponseMsg)) {
       TipsResponseMsg* trempkt = (TipsResponseMsg*)payload;
-      uint16_t hash=processTips(1,1); 
-      sendNewTip(hash);   
+      uint16_t h1= trempkt->tipHash_1;
+      uint16_t h2= trempkt->tipHash_2;
+      //uint16_t hash=processTips(h1,h2); 
+      sendNewTip(3);   
     }
     return msg;
   }

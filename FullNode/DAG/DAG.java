@@ -2,190 +2,183 @@ package DAG;
 
 import java.util.*;
 
- /**
-  * La classe DAG rappresenta un grafo diretto aciclico mediante liste di adiacenza.
-  * In particolare si e' voluto dare un'implementazione che utilizzasse classi
-  * standard di java.util.
-  * Di conseguenza:
-  * 1. la lista dei nodi e' rappresentata da una HashMap per poter accedere ai nodi in 
-  * tempo costante
-  * 2. la lista dei nodi adiacenti e' rappresentata da un HashSet di nodi orientati, in
-  * modo tale da poter verificare/accedere al nodo adiacente in tempo costante.
-  * Anziche' rappresentare il nodo adiacente e il peso dell'arco si e' preferito
-  * rappresentare l'arco completo.
-  *
-  */
-
-public class DAG extends Grafo {
-
-	private int time = 0;
-	private Map<Object,Integer> endValues = new HashMap<Object,Integer>();
-	private Map<Object,Integer> startValues = new HashMap<Object,Integer>();
+/**
+ * This class implements a DAG - Direct Acyclic Graph
+ * @author MARCO
+ */
+public class DAG
+{
+	/** 
+	 * Core element of the class. 
+	 * Keeps track of all Blocks created in a pair <Hash, Block>
+	 */
+	private HashMap<String, Block> blockChain = new HashMap<String, Block>();
+	
+	/** 
+	 * Support HashMap. 
+	 * Enables to keep track of how many new Blocks have verified a specific old Block.
+	 * This is helpful when looking for the Least Used Block, get its Hash and give it
+	 * to a Mote when creating a new Block.
+	 * Higher values for a Hash means more trustworthiness.
+	 * In order to create a solid and trustworthy DAG one should aim to verify 
+	 * the Least Used Blocks hence retrieving the 2 minimum Blocks' values from this Map.
+	 * 
+	 * String = The old Block is here represented by its own Hash.
+	 * Integer = The amount of new Blocks that have verified the old Block's Hash
+	 */
+	private HashMap<String, Integer> hashesList = new HashMap<String, Integer>();
 	
 	
-	
-	public boolean add(ArcoOrdinato a) {
-		return add(a.getFrom(),a.getTo(),a.getValue());
-	}
-
-	  public boolean add(Object x, Object y, Object value) {
-	    boolean flag = false, flag1 = false;
-	    if (!nodi.containsKey(x))
-	      add(x);
-	    if (!nodi.containsKey(y))
-	      add(y);
-	    ArcoOrdinato a = new ArcoOrdinato(x,y,value);
-	    flag = ( (Set<Arco>) nodi.get(x) ).add(a);
-	    flag1 =( (Set<Arco>) nodi.get(y) ).add(a);
-	    flag = flag && flag1;
-	    if (flag)
-	      nArchi++;
-	    return flag;
-	  }
-
-	  /**
-	   * Restituisce l'insieme di archi incidenti entranti nel nodo nodo,
-	   * se nodo e' presente nel grafo, null altrimenti 
-	   * 
-	   * @param nodo nodo di cui si vuole conoscere l'insieme di archi incidenti
-	   * @return l'insieme di archi incidenti sul nodo nodo, 
-	   * se nodo e' presente nel grafo null altrimenti
-	   */
-	  public Set<ArcoOrdinato> getInEdgeSet(Object nodo) {
-	    if (nodi.containsKey(nodo)){
-	    	//System.out.println("building inset for "+nodo);
-	    	Set<ArcoOrdinato> res = new HashSet<ArcoOrdinato>(); 
-	    	for (Arco o : getEdgeSet(nodo)) {
-				ArcoOrdinato a = (ArcoOrdinato) o;
-				if (a.getTo().equals(nodo)){
-					res.add(a);
-				}
-			}
-	    	return res;
-	    	
-	    } //se il nodo e' presente nel grafo
-	    else
-	      return null;
-	  }
-
-	  /**
-	   * Restituisce l'insieme di archi incidenti uscenti dal nodo nodo,
-	   * se nodo e' presente nel grafo, null altrimenti 
-	   * 
-	   * @param nodo nodo di cui si vuole conoscere l'insieme di archi incidenti
-	   * @return l'insieme di archi incidenti sul nodo nodo, 
-	   * se nodo e' presente nel grafo null altrimenti
-	   */
-	  public Set<ArcoOrdinato> getOutEdgeSet(Object nodo) {
-		    if (nodi.containsKey(nodo)){
-		    	Set<ArcoOrdinato> res = new HashSet<ArcoOrdinato>(); 
-		    	for (Arco  o : getEdgeSet(nodo)) {
-					ArcoOrdinato a = (ArcoOrdinato) o;
-					if (a.getFrom().equals(nodo)){
-						res.add(a);
-					}
-				}
-		    	return res;
-		    	
-		    } //se il nodo e' presente nel grafo
-		    else
-		      return null;
-	  }
-	  
-	  public String toString() {
-		    StringBuffer out = new StringBuffer();
-		    Object nodo;
-		    ArcoOrdinato a;
-		    Iterator arcoI;
-		    Iterator nodoI = nodi.keySet().iterator();
-		    while (nodoI.hasNext()) {
-		      arcoI = ((Set) nodi.get( nodo = nodoI.next() )).iterator();
-		      out.append("Nodo " + nodo.toString() + ": ");
-		      while (arcoI.hasNext()) {
-		        a = (ArcoOrdinato) arcoI.next();
-		        //out.append( ((a.x == nodo ) ? a.y.toString() : a.x.toString()) + "("+a.value.toString()+"), ");
-		        out.append(a.toString()+", ");
-		      }
-		      out.append("\n");
-		    }
-		    return out.toString();
-		  }
-	  
-	  
-	  
-	  /**
-	   * Restituisce un ordine topologico di un DAG, 
-	   * eseguendo una DFS. 
-	   *  
-	   * @return una ordine topologico del grafo partendo da startingNode
-	   */
-	  public List<Object> getTopologicalOrder(){
-		  System.out.println("metodo da implementare");
-		  return null;
-	  }
-	  
-	  /**
-	   * Data una map di nodi ad interi restituisce (ed elimina dalla map) il nodo che ha valore piu' alto.
-	   *  
-	   * @return nodo (object) con valore piu' alto. Il node viene eliminato dalla map.
-	   */
-	  private Object pullMax(Map<Object,Integer> m) {
-		  Object best = null;
-		  Integer bestValue = 0;
-		  for (Iterator iterator = m.keySet().iterator(); iterator.hasNext();) {
-			Object curr = iterator.next();
-			Integer currValue = m.get(curr);
-			if((best == null) || (currValue > bestValue)){
-				best = curr;
-				bestValue = currValue;
-			}
-		  }
-		  m.remove(best);
-		  return best;
-	  }
-
 	/**
-	   * Metodo ricorsivo che esegue la dfs dal nodo node
-	   * 
-	   * @param node nodo da cui partire per la visita DFS
-	   * @param nodes marcatura dei nodi da visitare
-	   * @param res ordine topologico che stiamo calcolando
-	   */
-	private void dfs(Object node) {
-		System.out.println("metodo da implementare");	  
+	 * Represents the pair (MoteID, Difficulty) where:
+	 * Difficulty represents the mote's difficulty to meet when creating a Block
+	 */
+	private HashMap<Integer, Integer> moteDifficulty = new HashMap<Integer, Integer>();
+	
+	
+	/**
+	 * General constructor for the DAG
+	 * It instantiates all the basic functions needed to start a new DAG
+	 */
+	public DAG()
+	{
+		this.generateGenesisBlocks();
+		//Other things to initialize...
 	}
-
-//	public static void main(String[] args) {
-//		    DAG g = new DAG();
-//		    g.add(new ArcoOrdinato("e","d",new Integer(1)));
-//		    g.add(new ArcoOrdinato("d","f",new Integer(1)));
-//		    g.add(new ArcoOrdinato("d","b",new Integer(3)));
-//		    g.add(new ArcoOrdinato("d","c",new Integer(4)));
-//		    g.add(new ArcoOrdinato("b","c",new Integer(2)));
-
-//		    System.out.println("Il grafo G e':\n" + g);
-//		    System.out.println("L'insieme di archi e': " + g.getEdgeSet());
-
-//		    System.out.println(g.getTopologicalOrder());
-//		    System.out.println();
-
-//		    //g2 contiene un ciclo	
-//		    DAG g2 = new DAG();
-//		    g2.add(new ArcoOrdinato("e","d",new Integer(1)));
-//		    g2.add(new ArcoOrdinato("d","f",new Integer(1)));
-//		    g2.add(new ArcoOrdinato("d","b",new Integer(3)));
-//		    g2.add(new ArcoOrdinato("c","d",new Integer(4)));
-//		    g2.add(new ArcoOrdinato("b","c",new Integer(2)));
-
-//		    System.out.println("Il grafo G2 e':\n" + g2);
-//		    System.out.println("L'insieme di archi e': " + g2.getEdgeSet());
-
-//		    System.out.println(g2.getTopologicalOrder());
-//		    System.out.println();
-//		    
-//		  }
 	
 	
+	/**
+	 * This constructor is meant to open a previously created DAG
+	 * and keep updating it with new blocks as they are received
+	 * 
+	 * @param txtFile Is it a path to the file? Is it the entire txt file? Dunno, help yourself
+	 */
+	public DAG(Object txtFile)
+	{
+		//ToDo;
+		//this.blockChain = txtFile.getBlockChain();
+		//this.hashesList = txtFile.getHashesList();
+		//and so on...
+	}
 	
+	/**
+	 * Generate the 2 Genesis Blocks needed for the DAG initialisation
+	 */
+	private void generateGenesisBlocks()
+	{
+		Block[] genesis = Block.generateGenesisBlocks();
+		
+		this.blockChain.put(genesis[0].getHash(), genesis[0]);
+		this.blockChain.put(genesis[1].getHash(), genesis[1]);
+		
+		this.hashesList.put(genesis[0].getHash(), 0);
+		this.hashesList.put(genesis[1].getHash(), 0);
+	}
+	
+	
+	/**
+	 * Add a Block to the DAG and
+	 * Update the list of validations
+	 * 
+	 * @param b The new Block to add
+	 */
+	public void addToDAG(Block b)
+	{
+		this.blockChain.put(b.getHash(), b);
+		this.updateHashesList(b);
+	}
+	
+	
+	/**
+	 * Add a new Block's hash to the list and 
+	 * Update the 2 verified Blocks increasing their number of validations
+	 *
+	 * @param b The new Block to add
+	 */
+	private void updateHashesList(Block b)
+	{
+		this.hashesList.put(b.getHash(), 0);
+		
+		int validations = this.hashesList.get(b.getPrevHash1()) + 1;
+		this.hashesList.put(b.getPrevHash1(), validations);
+
+		validations = this.hashesList.get(b.getPrevHash2()) + 1;
+		this.hashesList.put(b.getPrevHash2(), validations);
+	}
+	
+	
+	/**
+	 * Search in the this.hashesList for all the hashes and return 2 random ones
+	 * 
+	 * @return Two random hashes from the DAG
+	 */
+	public String[] getTips()
+	{
+		Random rng = new Random();
+		Object[] hashes = this.hashesList.keySet().toArray();
+		String h1 = (String) hashes[rng.nextInt(this.getTotalBlocks())];
+		String h2;
+		do
+		{
+			h2 = (String) hashes[rng.nextInt(this.getTotalBlocks())];
+		}
+		while(h2.equals(h1));
+		return new String[] {h1, h2};
+	}
+	
+	
+	/**
+	 * A correct DAG should provide the Least Used Blocks in order to 
+	 * increase the number of their validations and create a more robust structure.
+	 * 
+	 * You should implement this method to get the 2 minimum values stored 
+	 * into this.hashesList and return their associated Block Hashes
+	 * @return
+	 */
+	private String[] getMinimumValidatedBlocks()
+	{
+		//ToDo;
+		String[] toBeImplemented = {"To", "Do"};
+		return toBeImplemented;
+	}
+	
+	
+	/**
+	 * Retrieves the amount of blocks stored in the DAG
+	 * 
+	 * @return the amount of blocks stored in the DAG
+	 */
+	public int getTotalBlocks()
+	{
+		return this.hashesList.size();
+	}
+	
+	
+//	public String toString()
+//	{
+//		StringBuffer out = new StringBuffer();
+//		Object nodo;
+//		ArcoOrdinato a;
+//		Iterator arcoI;
+//		Iterator nodoI = nodi.keySet().iterator();
+//		while (nodoI.hasNext())
+//		{
+//			arcoI = ((Set) nodi.get(nodo = nodoI.next())).iterator();
+//			out.append("Nodo " + nodo.toString() + ": ");
+//			while (arcoI.hasNext())
+//			{
+//				a = (ArcoOrdinato) arcoI.next();
+//				// out.append( ((a.x == nodo ) ? a.y.toString() :
+//				// a.x.toString()) + "("+a.value.toString()+"), ");
+//				out.append(a.toString() + ", ");
+//			}
+//			out.append("\n");
+//		}
+//		return out.toString();
+//	}
+//
+//
+
+
 }
 

@@ -25,27 +25,22 @@ public class FullNode implements net.tinyos.message.MessageListener
 
   public void start() 
   {
-  
+   ;
   }
-  
   public void messageReceived(int to, Message message) 
   {
     long t = System.currentTimeMillis();
-    //Date d = new Date(t);
-    System.out.print("" + t + ": ");
     Date d = new Date(t);
     System.out.print("" + d + ": ");
-    System.out.println("Ricevuto un messaggio da: " + to);
+    System.out.println("Ricevuto un messaggio da: " + to); //a cosa si riferisce to?
     System.out.println("Il messaggio arrivato è: " + message.amType());
     
     if(message.amType() == TIPS_REQUEST_AMTYPE)
     {
     	//The mote is requesting for the DAG Tips to attach the measures to
-    	System.out.println("And here I am!!!");
-    	
-    	int[] tips = getTips();
-    	TipsResponseMsg sendMe = new TipsResponseMsg(); //Add here the DAG TIPS as object parameters
-    	//sendMe.addTips(tips); //Or something similar
+    	TipsResponseMsg sendMe = new MsgClass.TipsResponseMsg(); //Add here the DAG TIPS as object parameters
+        sendMe.set_tipHash_1(1);
+        sendMe.set_tipHash_1(2);
     	try
     	{
     		moteIF.send(to, (Message) sendMe);
@@ -58,8 +53,8 @@ public class FullNode implements net.tinyos.message.MessageListener
     else if(message.amType() == SEND_TIP_AMTYPE)
     {
     //The mote has sent its measures to add to the DAG
-    byte[] measures = message.dataGet();
-    //TODO:
+    System.out.println("Data" + message);
+    //TODO
     //1) Decifra le misure
     //2) Se la decifratura NON è ok -> DROP MESSAGE, fiducia molto in negativo
     //3a) Se la decifratura è ok -> continua
@@ -76,13 +71,7 @@ public class FullNode implements net.tinyos.message.MessageListener
   /**
     * Asks the DAG for the last 2 tips enabled to be attached by a new Tip
     * TODO: implement this the right way
-    */
-  private static int[] getTips()
-  {
-//  	dag.getTip();
-  }
-  
-  
+    */ 
   private static void usage() {
     System.err.println("usage: MsgReader [-comm <source>] message-class [message-class ...]");
   }
@@ -94,7 +83,7 @@ public class FullNode implements net.tinyos.message.MessageListener
   public static void main(String[] args) throws Exception 
   {
 
-    String[] msgClasses = {"MsgClass.TipsRequestMsg", "MsgClass.TipsResponseMsg", "MsgClass.SendTipMsg"};
+    String[] msgClasses = {"MsgClass.TipsRequestMsg", "MsgClass.SendTipMsg"};
     String[] allArgs = new String[args.length + msgClasses.length];
     for (int i = 0; i < args.length; i++) 
     {
@@ -137,13 +126,14 @@ public class FullNode implements net.tinyos.message.MessageListener
 		}
       }
     }
-    else if (allArgs.length != 0) {
+    else
+    {
       usage();
       System.exit(1);
     }
     //FineParteCaricamentoMessaggi
     FullNode fn = new FullNode(source);
-    dag = new DAG();
+    fn.dag=new DAG();
     Enumeration msgs = v.elements();
     while (msgs.hasMoreElements()) 
     {

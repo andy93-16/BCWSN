@@ -90,7 +90,7 @@ public class TipsResponseMsg extends net.tinyos.message.Message {
         s += "  [tipHash_1=0x"+Long.toHexString(get_tipHash_1())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       try {
-        s += "  [tiphash_2=0x"+Long.toHexString(get_tiphash_2())+"]\n";
+        s += "  [tipHash_2=0x"+Long.toHexString(get_tipHash_2())+"]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       return s;
     }
@@ -161,65 +161,65 @@ public class TipsResponseMsg extends net.tinyos.message.Message {
     }
 
     /////////////////////////////////////////////////////////
-    // Accessor methods for field: tiphash_2
+    // Accessor methods for field: tipHash_2
     //   Field type: int, unsigned
     //   Offset (bits): 16
     //   Size (bits): 16
     /////////////////////////////////////////////////////////
 
     /**
-     * Return whether the field 'tiphash_2' is signed (false).
+     * Return whether the field 'tipHash_2' is signed (false).
      */
-    public static boolean isSigned_tiphash_2() {
+    public static boolean isSigned_tipHash_2() {
         return false;
     }
 
     /**
-     * Return whether the field 'tiphash_2' is an array (false).
+     * Return whether the field 'tipHash_2' is an array (false).
      */
-    public static boolean isArray_tiphash_2() {
+    public static boolean isArray_tipHash_2() {
         return false;
     }
 
     /**
-     * Return the offset (in bytes) of the field 'tiphash_2'
+     * Return the offset (in bytes) of the field 'tipHash_2'
      */
-    public static int offset_tiphash_2() {
+    public static int offset_tipHash_2() {
         return (16 / 8);
     }
 
     /**
-     * Return the offset (in bits) of the field 'tiphash_2'
+     * Return the offset (in bits) of the field 'tipHash_2'
      */
-    public static int offsetBits_tiphash_2() {
+    public static int offsetBits_tipHash_2() {
         return 16;
     }
 
     /**
-     * Return the value (as a int) of the field 'tiphash_2'
+     * Return the value (as a int) of the field 'tipHash_2'
      */
-    public int get_tiphash_2() {
-        return (int)getUIntBEElement(offsetBits_tiphash_2(), 16);
+    public int get_tipHash_2() {
+        return (int)getUIntBEElement(offsetBits_tipHash_2(), 16);
     }
 
     /**
-     * Set the value of the field 'tiphash_2'
+     * Set the value of the field 'tipHash_2'
      */
-    public void set_tiphash_2(int value) {
-        setUIntBEElement(offsetBits_tiphash_2(), 16, value);
+    public void set_tipHash_2(int value) {
+        setUIntBEElement(offsetBits_tipHash_2(), 16, value);
     }
 
     /**
-     * Return the size, in bytes, of the field 'tiphash_2'
+     * Return the size, in bytes, of the field 'tipHash_2'
      */
-    public static int size_tiphash_2() {
+    public static int size_tipHash_2() {
         return (16 / 8);
     }
 
     /**
-     * Return the size, in bits, of the field 'tiphash_2'
+     * Return the size, in bits, of the field 'tipHash_2'
      */
-    public static int sizeBits_tiphash_2() {
+    public static int sizeBits_tipHash_2() {
         return 16;
     }
 
