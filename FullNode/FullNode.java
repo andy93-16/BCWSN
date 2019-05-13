@@ -7,9 +7,6 @@ import MsgClass.*;
 
 public class FullNode implements net.tinyos.message.MessageListener 
 {
-  private int TIPS_REQUEST_AMTYPE = 10;
-  private int SEND_TIP_AMTYPE = 12;
-  
   private DAG dag;
   
   private MoteIF moteIF;
@@ -31,29 +28,32 @@ public class FullNode implements net.tinyos.message.MessageListener
   {
     long t = System.currentTimeMillis();
     Date d = new Date(t);
-    System.out.print("" + d + ": ");
-    System.out.println("Ricevuto un messaggio da: " + to); //a cosa si riferisce to?
+    System.out.println("" + d + ":" + t);
     System.out.println("Il messaggio arrivato è: " + message.amType());
     
-    if(message.amType() == TIPS_REQUEST_AMTYPE)
-    {
+    if(message.amType() == MsgClass.TipsRequestMsg.AM_TYPE)
+    {   
     	//The mote is requesting for the DAG Tips to attach the measures to
-    	TipsResponseMsg sendMe = new MsgClass.TipsResponseMsg(); //Add here the DAG TIPS as object parameters
-        sendMe.set_tipHash_1(1);
-        sendMe.set_tipHash_1(2);
+        System.out.println("Si tratta del # : " + message.getSerialPacket().get_header_src());
+    	TipsResponseMsg tresm = new MsgClass.TipsResponseMsg(); //Add here the DAG TIPS as object parameters
+        short[] i={0,1,2,3,4,5,6,7};
+        tresm.set_tipHash_1(i);
     	try
     	{
-    		moteIF.send(to, (Message) sendMe);
+    		moteIF.send(message.getSerialPacket().get_header_src(), (Message) tresm);
+                System.out.println("INVIATO");
     	}
     	catch(Exception e)
     	{
     		System.out.println("Errore nella creazione del messaggio da inviare: " + e);
     	}
     }
-    else if(message.amType() == SEND_TIP_AMTYPE)
+    else if(message.amType() ==  MsgClass.SendTipMsg.AM_TYPE)
     {
+        SendTipMsg stm = new MsgClass.SendTipMsg(message,message.baseOffset(),message.dataLength());
+        System.out.println("Si tratta del # : " + message.getSerialPacket().get_header_src());
+        System.out.println("Contiene: " + message);
     //The mote has sent its measures to add to the DAG
-    System.out.println("Data" + message);
     //TODO
     //1) Decifra le misure
     //2) Se la decifratura NON è ok -> DROP MESSAGE, fiducia molto in negativo

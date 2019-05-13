@@ -5,6 +5,7 @@ uses {
        interface AMSend as AMSendTipMsg;
        interface Receive as AMTipsRespMsg;
        interface Packet;
+       interface AMPacket;
        interface SplitControl as AMControl;
        interface Timer<TMilli> as delta_tip;
        interface Timer<TMilli> as delta_measure;   
@@ -13,6 +14,7 @@ uses {
      }
 }
 implementation{
+
 
   message_t pkt;
   uint16_t measures[];
@@ -34,40 +36,65 @@ implementation{
       call Leds.led2Off();
   }
   
-  task void makeTip(){
+  task void makeTip(){    
+  /**definzione del task makeTip, esso avvia il timer relativo all'acquisizione delle misurazioni,
+  il cui intervallo di campionamento puo' essere modificato alla voce DELTA_MEASURE.
+  **/
     call delta_measure.startPeriodic(DELTA_MEASURE);
   }
 
-  void makeTipsRequest(){
-      int i;
+  void sendTipsRequest(uint16_t dest){  //Invio al FullNode un messaggio di richiesta per la costruzione di un nuovo blocco
       TipsRequestMsg* trmpkt = (TipsRequestMsg*)(call Packet.getPayload(&pkt, sizeof(TipsRequestMsg)));
       if (trmpkt == NULL) {
 	return;
       }
-      if (call AMTipsReqMsg.send(AM_BROADCAST_ADDR,&pkt, sizeof(TipsRequestMsg)) == SUCCESS) {
-         setLeds(0);
-         makeTip_running=FALSE;
-          
-      }    
+      if(call AMTipsReqMsg.send(dest,&pkt, sizeof(TipsRequestMsg))==SUCCESS){}      
   }
+  /**TODO:
+  uint16_t processTips(uint8_t h1[],uint8_t h2[],uint8_t dif,uint16_t meas[]){;
+  
+      H1 e H2 rappresentano i due array di int ricevuti dal FullNode che fanno riferimento
+      agli hash dei blocchi designati ad essere contenuti nel nuovo blocco.
+      "processTips" e' la funzione che implementa il proof of work, ovvero,
+      la prova che il LightNode deve sostenere per fare in modo che il FullNode inserisca 
+      il nuovo blocco nel dag.
+      Percio' il risultato sara' un nonce calcolato inserendo come informazioni i due hash,
+      la difficolta', ovvero, il numero di zeri presenti nell'hash finale e node_ID ottenibile 
+      mediante la variabile TOS_NODE_ID.
+  }
+  **/
+  
+  /**TODO:
+  uint8_t[] calcolaHash(uint8_t h1[],uint8_t h2[],uint8_t nonce,uint16_t meas[]){;
+  
+       In questa funzione e' riservata, invece, l'implementazione del calcolo dell'hash 
+       che deve essere utilizzata esternamente per praticita' e anche dal processTips 
+  }
+  **/ 
 
-  uint16_t processTips(uint16_t hash_1,uint16_t hash_2){}
-
-  void sendNewTip(uint16_t a){
+  void sendMakedTip(uint16_t dest,uint16_t nonce,uint8_t h[]){   /**Invio del blocco costruito 
+      contente hash,nonce e misure.
+      Il node id e il timestamp verranno inseriti direttamente dal FullNode
+      dopo aver ricalcolato la validita dell'hash.
+      */
       SendTipMsg* stmpkt = (SendTipMsg*)(call Packet.getPayload(&pkt, sizeof(SendTipMsg)));
       if (stmpkt == NULL) {
 	return;
       }
-      stmpkt->tipHash=a;
-      if (call AMSendTipMsg.send(AM_BROADCAST_ADDR,&pkt, sizeof(SendTipMsg)) == SUCCESS) {
-      }    
+      stmpkt->nonce=nonce;
+      memcpy(stmpkt->tipHash,h,LENGTH_HASH);
+      memcpy(stmpkt->temp,measures,NUM_MEASURES);
+      if (call AMSendTipMsg.send(dest,&pkt, sizeof(SendTipMsg)) == SUCCESS) {} 
   }
   
-  event void Boot.booted(){
+  event void Boot.booted(){ //Avvio Mote
     call AMControl.start();
   }
 
-  event void AMControl.startDone(error_t err){
+  event void AMControl.startDone(error_t err){ 
+    /**In caso di successo viene attivato il timer generale per la produzione del tip,
+    la cui durata e' configurabile nell'header LightNode.h sotto la voce di "DELTA_TIP"
+    **/  
     if (err == SUCCESS) {
         call delta_tip.startPeriodic(DELTA_TIP);
     }
@@ -78,48 +105,83 @@ implementation{
 
   event void AMControl.stopDone(error_t err){}
 
-  event void delta_tip.fired(){
+  event void delta_tip.fired(){ 
+    /**All'avvio del timer se la variabile makeTip_running risulta vera non viene avviato il task makeTip
+    poiche' gia' attivo, se invece risulta falso allora si puo' procedere alla costruzione di un nuovo 
+    blocco.
+    **/
     if(!makeTip_running){
       post makeTip();
-      setLeds(7);
       makeTip_running=TRUE;
     }   
   }
   
 
   event void delta_measure.fired(){
-      if(count_measures<LENGTH_MEASURES){
+    /** Nella voce NUM_MEASURES e' definito il numero di misurazioni che il LightNode
+    effettua e vuole inviare al FullNode, per questioni relative alla grandezza dell'AMActiveMessage
+    e cioe' al payload max che al momento nel tinyos e' definito su 28 byte, e' stato deciso di inserirne 
+    solo 5.  
+    **/
+      if(count_measures<NUM_MEASURES){
         call Temp.read();
       }
       else { 
         call delta_measure.stop();
         count_measures=0;
-        makeTipsRequest();  
+        sendTipsRequest(TOS_BCAST_ADDR); //Nel primo messagio il LightNode non conoscendo il FullNode invio un messagio broadcast.
       }
   }
 
-  event void Temp.readDone( error_t result, uint16_t val ){
+  event void Temp.readDone( error_t result, uint16_t val ){ 
+  //Ad ogni rilevazione della temperatura effettuata correttamente, viene aggiornato l'array delle misure.
      if (result == SUCCESS){
-        count_measures++;
         setLeds(count_measures);
         measures[count_measures]=val;
-        
+         count_measures++;
      }
   }
-
-  event void AMSendTipMsg.sendDone(message_t *msg, error_t error){
-  } 
-  event void AMTipsReqMsg.sendDone(message_t *msg, error_t error){
+   event void AMTipsReqMsg.sendDone(message_t *msg, error_t error){
+  //Al successo della TipsRequest viene attivato il primo led, in caso di insuccesso si rieffettua un'ulteriore.   
+     if(error==SUCCESS)
+        {setLeds(1);}
+     else {sendTipsRequest(TOS_BCAST_ADDR);}
   }
+  event void AMSendTipMsg.sendDone(message_t *msg, error_t error){ 
+  /**Al successo della SendTip vengono attivati tutti i led e passata a FALSE la variabile makeTip_running
+  ad indicare che e' possibile costruire un nuovo blocco.
+  In caso di insuccesso si riutilizza il messaggio presente ancora in memoria per rieffettuare un nuovo invio.
+  **/
+      if(error==SUCCESS){
+        setLeds(7);
+        makeTip_running=FALSE;}
+      else {
+       SendTipMsg* stmpkt = (SendTipMsg*)(call Packet.getPayload(msg, sizeof(SendTipMsg)));
+       //uint8_t(* th)[LENGTH_HASH]=(uint8_t)stmpkt->tipHash;
+//     sendMakedTip(call AMPacket.source(msg),stmpkt->nonce,stmpkt->thf);
+       sendMakedTip(call AMPacket.destination(msg),1,stmpkt->tipHash);
+       }
+  } 
   
   event message_t* AMTipsRespMsg.receive(message_t* msg, void* payload, uint8_t len){
-    if (len == sizeof(TipsResponseMsg)) {
-      TipsResponseMsg* trempkt = (TipsResponseMsg*)payload;
-      uint16_t h1= trempkt->tipHash_1;
-      uint16_t h2= trempkt->tipHash_2;
-      //uint16_t hash=processTips(h1,h2); 
-      sendNewTip(3);   
-    }
+  /**Alla ricezione del messaggio contenente i due hash e la difficolta per la costruzione del nuovo blocco 
+  verranno avviati da prima il processTips e successivamente il calcolaHash che successivamenete verrano rispediti 
+  al FullNode
+  **/
+      if (len == sizeof(TipsResponseMsg)){  
+      TipsResponseMsg *trmpkt= (TipsResponseMsg*)payload;
+      //uint8_t(* th1)[LENGTH_HASH]=(uint8_t)trmpkt->tipHash_1;
+//      uint8_t th1[LENGTH_HASH];
+//      uint8_t th2[LENGTH_HASH];
+//      memcpy(th1,(uint8_t)trmpkt->tipHash_1,LENGTH_HASH);
+//      memcpy(th2,(uint8_t)trmpkt->tipHash_2,LENGTH_HASH);
+//      uint8_t dif;
+//      dif=(uint8_t)trmpkt->dif;
+//      uint8_t nonce=processTips(th1,th2,dif,measures);
+//      uint8_t thf[LENGTH_HASH]=calcolaHash(th1,th2,nonce,measures);
+//      sendMakedTip(call AMPacket.source(msg),nonce,thf);
+      sendMakedTip(call AMPacket.source(msg),1,trmpkt->tipHash_1);
+      }
     return msg;
   }
 }

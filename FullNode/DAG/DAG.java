@@ -12,7 +12,7 @@ public class DAG
 	 * Core element of the class. 
 	 * Keeps track of all Blocks created in a pair <Hash, Block>
 	 */
-	private HashMap<String, Block> blockChain = new HashMap<String, Block>();
+	private HashMap<int[], Block> blockChain = new HashMap<int[], Block>();
 	
 	/** 
 	 * Support HashMap. 
@@ -23,10 +23,10 @@ public class DAG
 	 * In order to create a solid and trustworthy DAG one should aim to verify 
 	 * the Least Used Blocks hence retrieving the 2 minimum Blocks' values from this Map.
 	 * 
-	 * String = The old Block is here represented by its own Hash.
+	 * int[] = The old Block is here represented by its own Hash.
 	 * Integer = The amount of new Blocks that have verified the old Block's Hash
 	 */
-	private HashMap<String, Integer> hashesList = new HashMap<String, Integer>();
+	private HashMap<int[], Integer> hashesList = new HashMap<int[], Integer>();
 	
 	
 	/**
@@ -37,13 +37,25 @@ public class DAG
 	
 	
 	/**
+	 * Record the 2 previous hashes assigned to a specific mote for its next block
+	 */
+	private HashMap<Integer, int[][]> mote_prevHashes = new HashMap<Integer, int[][]>();
+	
+	/** Minimum difficulty to meet for each mote */
+	private final int minDifficulty = 1;
+	
+	/** Maximum difficulty to meet for each mote */
+	private final int maxDifficulty = 6;
+	
+	
+	/**
 	 * General constructor for the DAG
 	 * It instantiates all the basic functions needed to start a new DAG
 	 */
 	public DAG()
 	{
 		this.generateGenesisBlocks();
-		//Other things to initialize...
+		//Other things to initialise...
 	}
 	
 	
@@ -60,6 +72,7 @@ public class DAG
 		//this.hashesList = txtFile.getHashesList();
 		//and so on...
 	}
+	
 	
 	/**
 	 * Generate the 2 Genesis Blocks needed for the DAG initialisation
@@ -110,20 +123,25 @@ public class DAG
 	/**
 	 * Search in the this.hashesList for all the hashes and return 2 random ones
 	 * 
+	 * @param moteID represents the requesting mote ID. 
+	 * Why it is necessary: it lessens the memory usage of Blocks sent by the Mote via radio
+	 * Recording the moteID and its designated tips leaves less work for the mote. 
 	 * @return Two random hashes from the DAG
 	 */
-	public String[] getTips()
+	public int[][] getTips(int moteID)
 	{
 		Random rng = new Random();
 		Object[] hashes = this.hashesList.keySet().toArray();
-		String h1 = (String) hashes[rng.nextInt(this.getTotalBlocks())];
-		String h2;
+		int[] h1 = (int[]) hashes[rng.nextInt(this.getTotalBlocks())];
+		int[] h2;
 		do
 		{
-			h2 = (String) hashes[rng.nextInt(this.getTotalBlocks())];
+			h2 = (int[]) hashes[rng.nextInt(this.getTotalBlocks())];
 		}
 		while(h2.equals(h1));
-		return new String[] {h1, h2};
+		int[][] tips = new int[][] {h1, h2};
+		this.mote_prevHashes.put(moteID, tips);
+		return tips;
 	}
 	
 	
@@ -151,34 +169,74 @@ public class DAG
 	public int getTotalBlocks()
 	{
 		return this.hashesList.size();
+	}	
+	
+	
+	/**
+	 * ToDo:
+	 * Checks whether the received Block is valid
+	 * 
+	 * @param b The block to check
+	 * @return Whether the block is valid or not
+	 */
+	private boolean isBlockValid(Block b)
+	{
+		//ToDo:
+		//1) Prendi il moteID con b.getMote_ID()
+		//2) Trova la chiave pubblica del moteID
+		//3) Decifra il blocco 
+		//3b)Se non decifrabile con la chiave pubblica -> this.updateMoteDifficulty(moteID, 2)
+		//4) Prendi i due Tips relativi al mote da this.mote_prevHashes.get(moteID)
+		//5) Calcola l'hash (hashCalcolato) dei dati inseriti nel blocco insieme ai due Tips trovati al punto precedente
+		//6) Controlla che l'hash appena calcolato sia lo stesso di quello inviato nel Blocco b (ovvero b.hash)
+		//6b)Se gli hash sono diversi -> this.updateMoteDifficulty(moteID, 1)
+		//6c)Altrimenti -> this.updateMoteDifficulty(moteID, -1)
+		//7) return hashCalcolato.equals(b.hash);
+		return false;
 	}
 	
 	
-//	public String toString()
-//	{
-//		StringBuffer out = new StringBuffer();
-//		Object nodo;
-//		ArcoOrdinato a;
-//		Iterator arcoI;
-//		Iterator nodoI = nodi.keySet().iterator();
-//		while (nodoI.hasNext())
-//		{
-//			arcoI = ((Set) nodi.get(nodo = nodoI.next())).iterator();
-//			out.append("Nodo " + nodo.toString() + ": ");
-//			while (arcoI.hasNext())
-//			{
-//				a = (ArcoOrdinato) arcoI.next();
-//				// out.append( ((a.x == nodo ) ? a.y.toString() :
-//				// a.x.toString()) + "("+a.value.toString()+"), ");
-//				out.append(a.toString() + ", ");
-//			}
-//			out.append("\n");
-//		}
-//		return out.toString();
-//	}
-//
-//
-
-
+	/**
+	 * Updates the HashMap for motes difficulties
+	 * 
+	 * @param moteID The mote to judge
+	 * @param d The added difficulty to give. Can be positive (to punish) or negative (to reward).
+	 */
+	private void updateModeDifficulty(int moteID, int d)
+	{
+		int previousDifficulty = this.moteDifficulty.get(moteID);
+		if(d > 0)
+		{
+			if(previousDifficulty + d >= this.maxDifficulty)
+			{
+				this.moteDifficulty.put(moteID, this.maxDifficulty);
+			}
+			else
+			{
+				this.moteDifficulty.put(moteID, previousDifficulty + d);
+			}
+		}
+		else if(d < 0)
+		{
+			if(previousDifficulty + d <= this.minDifficulty)
+			{
+				this.moteDifficulty.put(moteID, this.minDifficulty);
+			}
+			else
+			{
+				this.moteDifficulty.put(moteID, previousDifficulty + d);
+			}
+		}
+	}
+	
+	/**
+	 * Returns the difficulty to meet for the given mote
+	 * 
+	 * @param moteID The mote
+	 * @return The difficulty linked to the given mote
+	 */
+	public int getMoteDifficulty(int moteID)
+	{
+		return this.moteDifficulty.get(moteID);
+	}
 }
-

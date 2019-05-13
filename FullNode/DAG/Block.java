@@ -1,15 +1,38 @@
 package DAG;
 
+import java.util.Arrays;
+
 public class Block
 {
 	private int mote_ID;
 	private int timestamp;
 	private int[] measures;
-	private String prevHash1; 
-	private String prevHash2;
-	private String hash;
+	private int[] prevHash1; 
+	private int[] prevHash2;
+	private int[] hash;
 	private int nonce;
 	
+
+	/**
+	 * Constructor to be used when reading Blocks
+	 * 
+	 * @param m
+	 * @param mt
+	 * @param h1
+	 * @param h2
+	 * @param hash
+	 * @param n
+	 */
+	public Block(int m, int t, int[] measures, int[] h1, int[] h2, int[] hash, int n)
+	{
+		this.mote_ID = m;
+		this.timestamp = t;
+		this.measures = measures;
+		this.prevHash1 = h1;
+		this.prevHash2 = h2;
+		this.hash = hash;
+		this.nonce = n;
+	}
 	
 	/**
 	 * Constructor to be used when reading Blocks
@@ -26,9 +49,9 @@ public class Block
 		this.mote_ID = m;
 		this.timestamp = t;
 		this.measures = measures;
-		this.prevHash1 = h1;
-		this.prevHash2 = h2;
-		this.hash = hash;
+		this.prevHash1 = Block.stringToIntArray(h1);
+		this.prevHash2 = Block.stringToIntArray(h2);
+		this.hash = Block.stringToIntArray(hash);
 		this.nonce = n;
 	}
 	
@@ -38,11 +61,37 @@ public class Block
 	 */
 	public static Block[] generateGenesisBlocks()
 	{
-		Block g1 = new Block(0, 0, new int[] {0}, "Genesis 1a", "Genesis 1b", "Genesis Hash 1", 0);
-		Block g2 = new Block(0, 0, new int[] {0}, "Genesis 2a", "Genesis 2b", "Genesis Hash 2", 0);
+		int[] genesisHash11 = stringToIntArray("Genesis 1a");
+		int[] genesisHash12 = stringToIntArray("Genesis 1b");
+		int[] genesisHash13 = stringToIntArray("Genesis Hash 1");
+		int[] genesisHash21 = stringToIntArray("Genesis 2a");
+		int[] genesisHash22 = stringToIntArray("Genesis 2b");
+		int[] genesisHash23 = stringToIntArray("Genesis Hash 2");
+		
+		Block g1 = new Block(0, 0, new int[] {0}, genesisHash11, genesisHash12, genesisHash13, 0);
+		Block g2 = new Block(0, 0, new int[] {0}, genesisHash21, genesisHash22, genesisHash23, 0);
 		return new Block[] {g1, g2};
 	}
 	
+	
+	/**
+	 * Motes are unable to send String over the Radio Channel
+	 * Hence we need to convert String -> int[]
+	 * 
+	 * @param s The string to convert
+	 * @return an int array representing the input String
+	 */
+	static int[] stringToIntArray(String s)
+	{
+		int i = 0;
+		int[] out = new int[s.length()];
+		for(char c : s.toCharArray())
+		{
+			out[i] = Character.getNumericValue(c);
+			i++;
+		}
+		return out;
+	}
 	
 //	private void computeHash(int difficulty)
 //	{
@@ -71,20 +120,6 @@ public class Block
 //		return stringToHash;
 //	}
 //	
-//	/**
-//	 * Computes the Block's hash and compares it to the given hash
-//	 * @return whether the given hash matches the Block's hash
-//	 */
-//	public boolean verifyBlock()
-//	{
-//		String baseHash = 
-//				this.mote_ID 
-//				+ this.measuresTimestamps.toString()
-//				+ this.prevHash1
-//				+ this.prevHash2
-//				+ this.nonce;
-//		return this.hash.equals(this.hashIt(baseHash));
-//	} 
 
 
 	public int getMote_ID()
@@ -99,37 +134,37 @@ public class Block
 	}
 	
 
-	public String getPrevHash1()
+	public int[] getPrevHash1()
 	{
 		return prevHash1;
 	}
 
 
-	public void setPrevHash1(String prevHash1)
+	public void setPrevHash1(int[] prevHash1)
 	{
 		this.prevHash1 = prevHash1;
 	}
 
 
-	public String getPrevHash2()
+	public int[] getPrevHash2()
 	{
 		return prevHash2;
 	}
 
 
-	public void setPrevHash2(String prevHash2)
+	public void setPrevHash2(int[] prevHash2)
 	{
 		this.prevHash2 = prevHash2;
 	}
 
 
-	public String getHash()
+	public int[] getHash()
 	{
 		return hash;
 	}
 
 
-	public void setHash(String hash)
+	public void setHash(int[] hash)
 	{
 		this.hash = hash;
 	}
@@ -169,56 +204,4 @@ public class Block
 	{
 		this.measures = measures;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

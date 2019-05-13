@@ -1,8 +1,8 @@
 LIGHTNODE_H= $(TOSROOT)/apps/BCWSN/LightNode/LightNode.h
 
-OTHER_CLEAN = rmMsg
+OTHER_CLEAN = rmMsg $(wildcard *.java) TipsRequestMsg.java TipsResponseMsg.java SendTipMsg.java
 
-Msg: $(wildcard *.java) TipsRequestMsg.java TipsResponseMsg.java SendTipMsg.java
+JavacMsg:
 	javac *.java
 
 TipsRequestMsg.java:
@@ -14,8 +14,9 @@ TipsResponseMsg.java:
 SendTipMsg.java:
 	mig java -java-classname=MsgClass.SendTipMsg $(LIGHTNODE_H) SendTipMsg -o SendTipMsg.java
 
-rmMsg:
+rmMsg:	
 	rm *.java
+        
 
 ROOT = ../../../../support/sdk/java
 

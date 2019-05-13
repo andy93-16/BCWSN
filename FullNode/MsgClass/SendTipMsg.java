@@ -9,12 +9,12 @@ package MsgClass;
 public class SendTipMsg extends net.tinyos.message.Message {
 
     /** The default size of this message type in bytes. */
-    public static final int DEFAULT_MESSAGE_SIZE = 2;
+    public static final int DEFAULT_MESSAGE_SIZE = 15;
 
     /** The Active Message type associated with this message. */
     public static final int AM_TYPE = 12;
 
-    /** Create a new SendTipMsg of size 2. */
+    /** Create a new SendTipMsg of size 15. */
     public SendTipMsg() {
         super(DEFAULT_MESSAGE_SIZE);
         amTypeSet(AM_TYPE);
@@ -87,7 +87,21 @@ public class SendTipMsg extends net.tinyos.message.Message {
     public String toString() {
       String s = "Message <SendTipMsg> \n";
       try {
-        s += "  [tipHash=0x"+Long.toHexString(get_tipHash())+"]\n";
+        s += "  [nonce=0x"+Long.toHexString(get_nonce())+"]\n";
+      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
+      try {
+        s += "  [tipHash=";
+        for (int i = 0; i < 8; i++) {
+          s += "0x"+Long.toHexString(getElement_tipHash(i) & 0xff)+" ";
+        }
+        s += "]\n";
+      } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
+      try {
+        s += "  [temp=";
+        for (int i = 0; i < 5; i++) {
+          s += "0x"+Long.toHexString(getElement_temp(i) & 0xff)+" ";
+        }
+        s += "]\n";
       } catch (ArrayIndexOutOfBoundsException aioobe) { /* Skip field */ }
       return s;
     }
@@ -95,10 +109,73 @@ public class SendTipMsg extends net.tinyos.message.Message {
     // Message-type-specific access methods appear below.
 
     /////////////////////////////////////////////////////////
-    // Accessor methods for field: tipHash
+    // Accessor methods for field: nonce
     //   Field type: int, unsigned
     //   Offset (bits): 0
     //   Size (bits): 16
+    /////////////////////////////////////////////////////////
+
+    /**
+     * Return whether the field 'nonce' is signed (false).
+     */
+    public static boolean isSigned_nonce() {
+        return false;
+    }
+
+    /**
+     * Return whether the field 'nonce' is an array (false).
+     */
+    public static boolean isArray_nonce() {
+        return false;
+    }
+
+    /**
+     * Return the offset (in bytes) of the field 'nonce'
+     */
+    public static int offset_nonce() {
+        return (0 / 8);
+    }
+
+    /**
+     * Return the offset (in bits) of the field 'nonce'
+     */
+    public static int offsetBits_nonce() {
+        return 0;
+    }
+
+    /**
+     * Return the value (as a int) of the field 'nonce'
+     */
+    public int get_nonce() {
+        return (int)getUIntBEElement(offsetBits_nonce(), 16);
+    }
+
+    /**
+     * Set the value of the field 'nonce'
+     */
+    public void set_nonce(int value) {
+        setUIntBEElement(offsetBits_nonce(), 16, value);
+    }
+
+    /**
+     * Return the size, in bytes, of the field 'nonce'
+     */
+    public static int size_nonce() {
+        return (16 / 8);
+    }
+
+    /**
+     * Return the size, in bits, of the field 'nonce'
+     */
+    public static int sizeBits_nonce() {
+        return 16;
+    }
+
+    /////////////////////////////////////////////////////////
+    // Accessor methods for field: tipHash
+    //   Field type: short[], unsigned
+    //   Offset (bits): 16
+    //   Size of each element (bits): 8
     /////////////////////////////////////////////////////////
 
     /**
@@ -109,52 +186,295 @@ public class SendTipMsg extends net.tinyos.message.Message {
     }
 
     /**
-     * Return whether the field 'tipHash' is an array (false).
+     * Return whether the field 'tipHash' is an array (true).
      */
     public static boolean isArray_tipHash() {
-        return false;
+        return true;
     }
 
     /**
      * Return the offset (in bytes) of the field 'tipHash'
      */
-    public static int offset_tipHash() {
-        return (0 / 8);
+    public static int offset_tipHash(int index1) {
+        int offset = 16;
+        if (index1 < 0 || index1 >= 8) throw new ArrayIndexOutOfBoundsException();
+        offset += 0 + index1 * 8;
+        return (offset / 8);
     }
 
     /**
      * Return the offset (in bits) of the field 'tipHash'
      */
-    public static int offsetBits_tipHash() {
-        return 0;
+    public static int offsetBits_tipHash(int index1) {
+        int offset = 16;
+        if (index1 < 0 || index1 >= 8) throw new ArrayIndexOutOfBoundsException();
+        offset += 0 + index1 * 8;
+        return offset;
     }
 
     /**
-     * Return the value (as a int) of the field 'tipHash'
+     * Return the entire array 'tipHash' as a short[]
      */
-    public int get_tipHash() {
-        return (int)getUIntBEElement(offsetBits_tipHash(), 16);
+    public short[] get_tipHash() {
+        short[] tmp = new short[8];
+        for (int index0 = 0; index0 < numElements_tipHash(0); index0++) {
+            tmp[index0] = getElement_tipHash(index0);
+        }
+        return tmp;
     }
 
     /**
-     * Set the value of the field 'tipHash'
+     * Set the contents of the array 'tipHash' from the given short[]
      */
-    public void set_tipHash(int value) {
-        setUIntBEElement(offsetBits_tipHash(), 16, value);
+    public void set_tipHash(short[] value) {
+        for (int index0 = 0; index0 < value.length; index0++) {
+            setElement_tipHash(index0, value[index0]);
+        }
     }
 
     /**
-     * Return the size, in bytes, of the field 'tipHash'
+     * Return an element (as a short) of the array 'tipHash'
      */
-    public static int size_tipHash() {
-        return (16 / 8);
+    public short getElement_tipHash(int index1) {
+        return (short)getUIntBEElement(offsetBits_tipHash(index1), 8);
     }
 
     /**
-     * Return the size, in bits, of the field 'tipHash'
+     * Set an element of the array 'tipHash'
      */
-    public static int sizeBits_tipHash() {
-        return 16;
+    public void setElement_tipHash(int index1, short value) {
+        setUIntBEElement(offsetBits_tipHash(index1), 8, value);
+    }
+
+    /**
+     * Return the total size, in bytes, of the array 'tipHash'
+     */
+    public static int totalSize_tipHash() {
+        return (64 / 8);
+    }
+
+    /**
+     * Return the total size, in bits, of the array 'tipHash'
+     */
+    public static int totalSizeBits_tipHash() {
+        return 64;
+    }
+
+    /**
+     * Return the size, in bytes, of each element of the array 'tipHash'
+     */
+    public static int elementSize_tipHash() {
+        return (8 / 8);
+    }
+
+    /**
+     * Return the size, in bits, of each element of the array 'tipHash'
+     */
+    public static int elementSizeBits_tipHash() {
+        return 8;
+    }
+
+    /**
+     * Return the number of dimensions in the array 'tipHash'
+     */
+    public static int numDimensions_tipHash() {
+        return 1;
+    }
+
+    /**
+     * Return the number of elements in the array 'tipHash'
+     */
+    public static int numElements_tipHash() {
+        return 8;
+    }
+
+    /**
+     * Return the number of elements in the array 'tipHash'
+     * for the given dimension.
+     */
+    public static int numElements_tipHash(int dimension) {
+      int array_dims[] = { 8,  };
+        if (dimension < 0 || dimension >= 1) throw new ArrayIndexOutOfBoundsException();
+        if (array_dims[dimension] == 0) throw new IllegalArgumentException("Array dimension "+dimension+" has unknown size");
+        return array_dims[dimension];
+    }
+
+    /**
+     * Fill in the array 'tipHash' with a String
+     */
+    public void setString_tipHash(String s) { 
+         int len = s.length();
+         int i;
+         for (i = 0; i < len; i++) {
+             setElement_tipHash(i, (short)s.charAt(i));
+         }
+         setElement_tipHash(i, (short)0); //null terminate
+    }
+
+    /**
+     * Read the array 'tipHash' as a String
+     */
+    public String getString_tipHash() { 
+         char carr[] = new char[Math.min(net.tinyos.message.Message.MAX_CONVERTED_STRING_LENGTH,8)];
+         int i;
+         for (i = 0; i < carr.length; i++) {
+             if ((char)getElement_tipHash(i) == (char)0) break;
+             carr[i] = (char)getElement_tipHash(i);
+         }
+         return new String(carr,0,i);
+    }
+
+    /////////////////////////////////////////////////////////
+    // Accessor methods for field: temp
+    //   Field type: short[], unsigned
+    //   Offset (bits): 80
+    //   Size of each element (bits): 8
+    /////////////////////////////////////////////////////////
+
+    /**
+     * Return whether the field 'temp' is signed (false).
+     */
+    public static boolean isSigned_temp() {
+        return false;
+    }
+
+    /**
+     * Return whether the field 'temp' is an array (true).
+     */
+    public static boolean isArray_temp() {
+        return true;
+    }
+
+    /**
+     * Return the offset (in bytes) of the field 'temp'
+     */
+    public static int offset_temp(int index1) {
+        int offset = 80;
+        if (index1 < 0 || index1 >= 5) throw new ArrayIndexOutOfBoundsException();
+        offset += 0 + index1 * 8;
+        return (offset / 8);
+    }
+
+    /**
+     * Return the offset (in bits) of the field 'temp'
+     */
+    public static int offsetBits_temp(int index1) {
+        int offset = 80;
+        if (index1 < 0 || index1 >= 5) throw new ArrayIndexOutOfBoundsException();
+        offset += 0 + index1 * 8;
+        return offset;
+    }
+
+    /**
+     * Return the entire array 'temp' as a short[]
+     */
+    public short[] get_temp() {
+        short[] tmp = new short[5];
+        for (int index0 = 0; index0 < numElements_temp(0); index0++) {
+            tmp[index0] = getElement_temp(index0);
+        }
+        return tmp;
+    }
+
+    /**
+     * Set the contents of the array 'temp' from the given short[]
+     */
+    public void set_temp(short[] value) {
+        for (int index0 = 0; index0 < value.length; index0++) {
+            setElement_temp(index0, value[index0]);
+        }
+    }
+
+    /**
+     * Return an element (as a short) of the array 'temp'
+     */
+    public short getElement_temp(int index1) {
+        return (short)getUIntBEElement(offsetBits_temp(index1), 8);
+    }
+
+    /**
+     * Set an element of the array 'temp'
+     */
+    public void setElement_temp(int index1, short value) {
+        setUIntBEElement(offsetBits_temp(index1), 8, value);
+    }
+
+    /**
+     * Return the total size, in bytes, of the array 'temp'
+     */
+    public static int totalSize_temp() {
+        return (40 / 8);
+    }
+
+    /**
+     * Return the total size, in bits, of the array 'temp'
+     */
+    public static int totalSizeBits_temp() {
+        return 40;
+    }
+
+    /**
+     * Return the size, in bytes, of each element of the array 'temp'
+     */
+    public static int elementSize_temp() {
+        return (8 / 8);
+    }
+
+    /**
+     * Return the size, in bits, of each element of the array 'temp'
+     */
+    public static int elementSizeBits_temp() {
+        return 8;
+    }
+
+    /**
+     * Return the number of dimensions in the array 'temp'
+     */
+    public static int numDimensions_temp() {
+        return 1;
+    }
+
+    /**
+     * Return the number of elements in the array 'temp'
+     */
+    public static int numElements_temp() {
+        return 5;
+    }
+
+    /**
+     * Return the number of elements in the array 'temp'
+     * for the given dimension.
+     */
+    public static int numElements_temp(int dimension) {
+      int array_dims[] = { 5,  };
+        if (dimension < 0 || dimension >= 1) throw new ArrayIndexOutOfBoundsException();
+        if (array_dims[dimension] == 0) throw new IllegalArgumentException("Array dimension "+dimension+" has unknown size");
+        return array_dims[dimension];
+    }
+
+    /**
+     * Fill in the array 'temp' with a String
+     */
+    public void setString_temp(String s) { 
+         int len = s.length();
+         int i;
+         for (i = 0; i < len; i++) {
+             setElement_temp(i, (short)s.charAt(i));
+         }
+         setElement_temp(i, (short)0); //null terminate
+    }
+
+    /**
+     * Read the array 'temp' as a String
+     */
+    public String getString_temp() { 
+         char carr[] = new char[Math.min(net.tinyos.message.Message.MAX_CONVERTED_STRING_LENGTH,5)];
+         int i;
+         for (i = 0; i < carr.length; i++) {
+             if ((char)getElement_temp(i) == (char)0) break;
+             carr[i] = (char)getElement_temp(i);
+         }
+         return new String(carr,0,i);
     }
 
 }

@@ -1,6 +1,6 @@
 #include <Timer.h>
 #include "LightNode.h"
- 
+
 configuration LightNodeAppC {
 }
 implementation {
@@ -28,5 +28,6 @@ implementation {
    App.Packet -> ActiveMessageC;
    App.delta_measure -> Timer1;
    App.AMControl -> ActiveMessageC;
+   App.AMPacket -> ActiveMessageC;
  }
  
