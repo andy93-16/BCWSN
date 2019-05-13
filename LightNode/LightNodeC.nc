@@ -17,7 +17,7 @@ implementation{
 
 
   message_t pkt;
-  uint16_t measures[];
+  uint16_t measures[NUM_MEASURES];
   uint8_t count_measures = 0;
   bool makeTip_running = FALSE;
 
@@ -157,9 +157,11 @@ implementation{
         makeTip_running=FALSE;}
       else {
        SendTipMsg* stmpkt = (SendTipMsg*)(call Packet.getPayload(msg, sizeof(SendTipMsg)));
-       //uint8_t(* th)[LENGTH_HASH]=(uint8_t)stmpkt->tipHash;
-//     sendMakedTip(call AMPacket.source(msg),stmpkt->nonce,stmpkt->thf);
-       sendMakedTip(call AMPacket.destination(msg),1,stmpkt->tipHash);
+       uint8_t th[LENGTH_HASH];
+       memcpy(th,stmpkt->tipHash,LENGTH_HASH);
+//     uint8_t nonce=stmpkt->nonce;
+//     sendMakedTip(call AMPacket.source(msg),nonce,th);
+       sendMakedTip(call AMPacket.destination(msg),1,th);
        }
   } 
   
@@ -170,17 +172,17 @@ implementation{
   **/
       if (len == sizeof(TipsResponseMsg)){  
       TipsResponseMsg *trmpkt= (TipsResponseMsg*)payload;
-      //uint8_t(* th1)[LENGTH_HASH]=(uint8_t)trmpkt->tipHash_1;
-//      uint8_t th1[LENGTH_HASH];
-//      uint8_t th2[LENGTH_HASH];
-//      memcpy(th1,(uint8_t)trmpkt->tipHash_1,LENGTH_HASH);
-//      memcpy(th2,(uint8_t)trmpkt->tipHash_2,LENGTH_HASH);
-//      uint8_t dif;
-//      dif=(uint8_t)trmpkt->dif;
-//      uint8_t nonce=processTips(th1,th2,dif,measures);
-//      uint8_t thf[LENGTH_HASH]=calcolaHash(th1,th2,nonce,measures);
-//      sendMakedTip(call AMPacket.source(msg),nonce,thf);
-      sendMakedTip(call AMPacket.source(msg),1,trmpkt->tipHash_1);
+      uint8_t thf[LENGTH_HASH];
+      memcpy(thf,trmpkt->tipHash_1,LENGTH_HASH);
+//    uint8_t th1[LENGTH_HASH];
+//    uint8_t th2[LENGTH_HASH];
+//    memcpy(th1,trmpkt->tipHash_1,LENGTH_HASH);
+//    memcpy(th2,trmpkt->tipHash_2,LENGTH_HASH);
+//    uint8_t dif=trmpkt->dif;
+//    uint8_t nonce=processTips(th1,th2,dif,measures);
+//    uint8_t thf[LENGTH_HASH]=calcolaHash(th1,th2,nonce,measures);
+//    sendMakedTip(call AMPacket.source(msg),nonce,thf);
+      sendMakedTip(call AMPacket.source(msg),1,thf);
       }
     return msg;
   }
