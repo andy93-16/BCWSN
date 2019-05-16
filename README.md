@@ -2,7 +2,7 @@
 
 ### Scopo del progetto: Costruire una Blockchain per memorizzare le misurazioni effettuate dai mote
 
-Una Blockchain è, letteralmente, una catena di Blocchi legati tra loro mediante l'hash di un blocco precedente. E' un sistema distribuito tra tutti gli utenti che partecipano alla creazione di nuovi blocchi. Altro sulle blockchain: .
+Una Blockchain è, letteralmente, una catena di Blocchi legati tra loro mediante l'hash di un blocco precedente. E' un sistema distribuito tra tutti gli utenti che partecipano alla creazione di nuovi blocchi.
 Viste le notevoli limitazioni hardware dei sensori WSN si è deciso di porre alcune modifiche all'idea base della blockchain.
 
 Il nostro sistema è attualmente centralizzato per minimizzare l'utilizzo di memoria richiesta sui Mote. Esisterà un dispositivo detto FullNode, rappresentato da un PC, che manterrà in memoria numerose variabili tra le quali l'intera blockchain.
