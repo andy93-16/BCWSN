@@ -129,7 +129,7 @@ implementation{
       else { 
         call delta_measure.stop();
         count_measures=0;
-        sendTipsRequest(TOS_BCAST_ADDR); //Nel primo messagio il LightNode non conoscendo il FullNode invio un messagio broadcast.
+        sendTipsRequest(TOS_BCAST_ADDR); //Nel primo messagio il LightNode non conoscendo il FullNode invia un messagio broadcast.
       }
   }
 
