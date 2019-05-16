@@ -33,7 +33,7 @@ Nell'implementazione reale di un DAG, gli hash da inviare devono corrispondere a
 
 Ricevuto il blocco di misurazioni dal LightNode, ne verifica la correttezza
 
-####ToDo:
+#### ToDo:
 Bisogna decifrare il blocco, determinare la correttezza dei dati in esso presenti, aggiornare la tabella di credibilità del LightNode e, eventualmente, aggiungere il Blocco al DAG se tutti i controlli sono risultati soddisfacenti.
 
 Aggiorna la difficoltà da superare per un determinato LightNode in base all'ultimo blocco che questi ha inviato al FullNode.
