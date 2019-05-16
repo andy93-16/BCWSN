@@ -1,6 +1,6 @@
-#Blockchain on WSN
+# Blockchain on WSN
 
-###Scopo del progetto: Costruire una Blockchain per memorizzare le misurazioni effettuate dai mote
+### Scopo del progetto: Costruire una Blockchain per memorizzare le misurazioni effettuate dai mote
 
 Una Blockchain è, letteralmente, una catena di Blocchi legati tra loro mediante l'hash di un blocco precedente. E' un sistema distribuito tra tutti gli utenti che partecipano alla creazione di nuovi blocchi. Altro sulle blockchain: qui.
 Viste le notevoli limitazioni hardware dei sensori WSN si è deciso di porre alcune modifiche all'idea base della blockchain.
@@ -19,7 +19,7 @@ Il moteID rappresenta un ID univoco per ogni sensore WSN
 Il nonce è un numero intero che provvede alla generazione di nuovi hash. Maggiori informazioni sui nonce si possono trovare su <https://en.bitcoin.it/wiki/Nonce> 
 Cifra le informazioni di sopra in un Blocco e lo manda al FullNode
 
-####ToDo:
+#### ToDo:
  Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza; sviluppare un sistema di cifratura leggero sia computazionalmente che temporalmente parlando richiede un attento studio.
 
 Il FullNode si occupa delle seguenti operazioni:
@@ -27,7 +27,7 @@ Generare due blocchi Genesi. Sono i 2 blocchi iniziali tramite i quali è possib
 
 Risponde al LightNode inviando gli hash dei 2 blocchi precedenti
 
-####ToDo:
+#### ToDo:
 Nell'implementazione reale di un DAG, gli hash da inviare devono corrispondere ai blocchi meno utilizzati all'interno del DAG stesso. Ciò equivale ad accrescere l'attendibilità dei nuovi blocchi, quelli inseriti più di recente. E' infatti possibile creare un blocco con misurazioni (appositamente) inesatte e cercare di inserirlo nella struttura. Viene quindi richiesta la verifica di ciascun blocco, sia nel momento precedente l'aggiunta al DAG, sia in un secondo momento. Quando (l'hash di) un blocco viene usato da molteplici altri blocchi, la sua attendibilità aumenta poiché ritenuto sufficientemente affidabile da poter far parte del DAG.
 
 
@@ -38,7 +38,7 @@ Bisogna decifrare il blocco, determinare la correttezza dei dati in esso present
 
 Aggiorna la difficoltà da superare per un determinato LightNode in base all'ultimo blocco che questi ha inviato al FullNode.
 
-####ToDo:
+#### ToDo:
 Aggiornare la difficoltà richiede grande conoscenza dei possibili attacchi alle blockchain, ai DAG, ai mote ed a molte altre variabili presenti nel progetto in questione. Un'idea di come poter sviluppare quanto appena descritto la si può trovare nel paper “Towards Secure Industrial IoT: Blockchain System with Credit-Based Consensus Mechanism” a cura di Junqin Huang, Linghe Kong, Senior Member, IEEE, Guihai Chen, Min-You Wu, Xue Liu, Senior Member, IEEE, Peng Zeng.
 
 
