@@ -18,14 +18,15 @@ I sensori che si occupano della costruzione dei blocchi sono detti LightNode. Qu
    - Il moteID rappresenta un ID univoco per ogni sensore WSN
    - Il nonce è un numero intero che provvede alla generazione di nuovi hash. Maggiori informazioni sui nonce si possono trovare su <https://en.bitcoin.it/wiki/Nonce> 
  - Cifra le informazioni di sopra in un Blocco e lo manda al FullNode
-
-#### ToDo:
- Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza; sviluppare un sistema di cifratura leggero sia computazionalmente che temporalmente parlando richiede un attento studio.
+    
+    #### ToDo (CIFRATURA) :
+    Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza; sviluppare un sistema di cifratura leggero sia computazionalmente che temporalmente parlando richiede un attento studio.
+    Nel paper [1] a pagina 5, si discute di un eventuale implementazione che risolve questa problematica, attraverso l'utilizzo di un sistema a chiave simmetrica che si inizializza mediante un ulteriore processo di distribuzione basato sul concetto di chiave pubblica e privata gestita dal FullNode come Certfication Authority.  
 
 Il FullNode si occupa delle seguenti operazioni:
  - Generare due blocchi Genesi. Sono i 2 blocchi iniziali tramite i quali è possibile iniziare il DAG
  - Risponde al LightNode inviando gli hash dei 2 blocchi precedenti
-   #### ToDo:
+   #### ToDo (Credit-Based PoW Mechanism):
    Nell'implementazione reale di un DAG, gli hash da inviare devono corrispondere ai blocchi meno utilizzati all'interno del DAG stesso.    Ciò equivale ad accrescere l'attendibilità dei nuovi blocchi, quelli inseriti più di recente. E' infatti possibile creare un blocco      con misurazioni (appositamente) inesatte e cercare di inserirlo nella struttura. Viene quindi richiesta la verifica di ciascun          blocco, sia nel momento precedente l'aggiunta al DAG, sia in un secondo momento. Quando (l'hash di) un blocco viene usato da            molteplici altri blocchi, la sua attendibilità aumenta poiché ritenuto sufficientemente affidabile da poter far parte del DAG.
  
  - Ricevuto il blocco di misurazioni dal LightNode, ne verifica la correttezza
@@ -35,6 +36,7 @@ Il FullNode si occupa delle seguenti operazioni:
  - Aggiorna la difficoltà da superare per un determinato LightNode in base all'ultimo blocco che questi ha inviato al FullNode.
    #### ToDo:
    Aggiornare la difficoltà richiede grande conoscenza dei possibili attacchi alle blockchain, ai DAG, ai mote ed a molte altre            variabili presenti nel progetto in questione. Un'idea di come poter sviluppare quanto appena descritto la si può trovare a pagina 4,    capitolo "B. Credit-Based PoW Mechanism" nel paper [1]
+   
    
    
 Riferimenti   
