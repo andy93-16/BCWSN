@@ -40,13 +40,17 @@ Il FullNode si occupa delle seguenti operazioni:
 
 Il sistema appena descritto, e' stato implementato sul framework di TinyOS.
 L'architettura, quindi, come gia' descritto precedemente sara' composta dal LightNode e il FullNode funzionera' mediante una normale BaseStation che collegata al PC permettera' di ricevere i messaggi e elaborarli attraverso un applicazione scritta in Java definita come FullNode.
+
 <p align="center">
   <img width="460" height="300" src="architecture.png">
 </p>
+
 ### Istruzioni sul LightNode :
   Per quanto riguarda, l'utilizzo dell'applicazione NesC relativo al LightNode all'interno della cartella stessa e' presente un file header dove e' possibile definire i seguenti parametri seguenti:
  - DELTA_TIP : intervallo di tempo per l'invio del nuovo tip, ad esso andranno inseriti eventualmente i tempi necessari per l'attuazione del PoW
- - DELTA_MEASURES : intervallo di tempo tra una rivelazione e l'altra delle temperature 
+ - DELTA_MEASURES : intervallo di tempo tra una rivelazione e l'altra delle temperature
+ - NUM_MEASURES : numero di misurazioni effettuate da inviare, per problematiche relative alla grandezza max del payload dell'A ctive Message e' possibile inviare solo fino a 26 byte, ma e' possibile estenderlo.
+ - LENGTH_HASH : lunghezza dell'hash, gli hash sono istanziati come array di uint8_t.
 
 ### Installazione FullNode :
    
