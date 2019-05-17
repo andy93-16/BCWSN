@@ -11,6 +11,7 @@ La struttura iniziale della blockchain è stata oggigiorno sostituita dal DAG �
  - Molto buono: <https://www.youtube.com/watch?v=CZxH1V_zoug> 
  - Molto meno buono: <https://www.cryptominando.it/2018/04/02/dag-blockchain/> 
 
+### LightNode
 I sensori che si occupano della costruzione dei blocchi sono detti LightNode. Questi eseguono le seguenti operazioni:
  - Richiedi al FullNode gli hash dei 2 blocchi precedenti (prevHash1, prevHash2)
  - Effettua delle misurazioni 
@@ -18,11 +19,11 @@ I sensori che si occupano della costruzione dei blocchi sono detti LightNode. Qu
    - Il moteID rappresenta un ID univoco per ogni sensore WSN
    - Il nonce è un numero intero che provvede alla generazione di nuovi hash. Maggiori informazioni sui nonce si possono trovare su <https://en.bitcoin.it/wiki/Nonce> 
  - Cifra le informazioni di sopra in un Blocco e lo manda al FullNode
-    
     #### ToDo (CIFRATURA) :
     Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza; sviluppare un sistema di cifratura leggero sia computazionalmente che temporalmente parlando richiede un attento studio.
     Nel paper [1] a pagina 5, si discute di un eventuale implementazione che risolve questa problematica, attraverso l'utilizzo di un sistema a chiave simmetrica che si inizializza mediante un ulteriore processo di distribuzione basato sul concetto di chiave pubblica e privata gestita dal FullNode come Certfication Authority.  
 
+### FullNode
 Il FullNode si occupa delle seguenti operazioni:
  - Generare due blocchi Genesi. Sono i 2 blocchi iniziali tramite i quali è possibile iniziare il DAG
  - Risponde al LightNode inviando gli hash dei 2 blocchi precedenti
@@ -38,6 +39,9 @@ Il FullNode si occupa delle seguenti operazioni:
    Aggiornare la difficoltà richiede grande conoscenza dei possibili attacchi alle blockchain, ai DAG, ai mote ed a molte altre            variabili presenti nel progetto in questione. Un'idea di come poter sviluppare quanto appena descritto la si può trovare a pagina 4,    capitolo "B. Credit-Based PoW Mechanism" nel paper [1]
    
    
+### Installazione LightNode
+
+### Installazione FullNode
    
-Riferimenti   
+### Riferimenti   
 1 - “Towards Secure Industrial IoT: Blockchain System with Credit-Based Consensus Mechanism” a cura di Junqin Huang, Linghe Kong, Senior Member, IEEE, Guihai Chen, Min-You Wu, Xue Liu, Senior Member, IEEE, Peng Zeng.
