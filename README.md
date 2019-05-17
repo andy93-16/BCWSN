@@ -42,7 +42,7 @@ Il sistema appena descritto, e' stato semi-implementato sul framework di TinyOS.
 L'architettura, quindi, come gia' descritto precedemente sara' composta dal LightNode con un applicazione completamente riscritta e il FullNode funzionera' mediante una normale BaseStation che collegata al PC permettera' di ricevere i messaggi e elaborarli attraverso un applicazione scritta in Java definita come FullNode.
    
 ### Istruzioni sul LightNode :
-    Per quanto riguarda, l'utilizzo dell'applicazione NesC relativo al LightNode all'interno della cartella stessa e' presente un file header dove e' possibile definire i seguenti parametri seguenti:
+  Per quanto riguarda, l'utilizzo dell'applicazione NesC relativo al LightNode all'interno della cartella stessa e' presente un file header dove e' possibile definire i seguenti parametri seguenti:
  - DELTA_TIP : intervallo di tempo per l'invio del nuovo tip, ad esso andranno inseriti eventualmente i tempi necessari per l'attuazione del PoW
  - DELTA_MEASURES : intervallo di tempo tra una rivelazione e l'altra delle temperature 
 
