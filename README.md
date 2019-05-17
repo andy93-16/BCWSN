@@ -52,7 +52,7 @@ L'architettura, quindi, come gia' descritto precedemente sara' composta dal Ligh
  - NUM_MEASURES : numero di misurazioni effettuate da inviare, per problematiche relative alla grandezza max del payload dell'A ctive Message e' possibile inviare solo fino a 26 byte, ma e' possibile estenderlo.
  - LENGTH_HASH : lunghezza dell'hash, gli hash sono istanziati come array di uint8_t.
 
-### Installazione FullNode :
+### Istruzione sul FullNode :
    
 ### Riferimenti   
 1 - “Towards Secure Industrial IoT: Blockchain System with Credit-Based Consensus Mechanism” a cura di Junqin Huang, Linghe Kong, Senior Member, IEEE, Guihai Chen, Min-You Wu, Xue Liu, Senior Member, IEEE, Peng Zeng.
