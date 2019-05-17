@@ -37,11 +37,16 @@ Il FullNode si occupa delle seguenti operazioni:
  - Aggiorna la difficoltà da superare per un determinato LightNode in base all'ultimo blocco che questi ha inviato al FullNode.
    #### ToDo:
    Aggiornare la difficoltà richiede grande conoscenza dei possibili attacchi alle blockchain, ai DAG, ai mote ed a molte altre            variabili presenti nel progetto in questione. Un'idea di come poter sviluppare quanto appena descritto la si può trovare a pagina 4,    capitolo "B. Credit-Based PoW Mechanism" nel paper [1]
-   
-   
-### Installazione LightNode
 
-### Installazione FullNode
+Il sistema appena descritto, e' stato semi-implementato sul framework di TinyOS.
+L'architettura, quindi, come gia' descritto precedemente sara' composta dal LightNode con un applicazione completamente riscritta e il FullNode funzionera' mediante una normale BaseStation che collegata al PC permettera' di ricevere i messaggi e elaborarli attraverso un applicazione scritta in Java definita come FullNode.
+   
+### Istruzioni sul LightNode :
+    Per quanto riguarda, l'utilizzo dell'applicazione NesC relativo al LightNode all'interno della cartella stessa e' presente un file header dove e' possibile definire i seguenti parametri seguenti:
+ - DELTA_TIP : intervallo di tempo per l'invio del nuovo tip, ad esso andranno inseriti eventualmente i tempi necessari per l'attuazione del PoW
+ - DELTA_MEASURES : intervallo di tempo tra una rivelazione e l'altra delle temperature 
+
+### Installazione FullNode :
    
 ### Riferimenti   
 1 - “Towards Secure Industrial IoT: Blockchain System with Credit-Based Consensus Mechanism” a cura di Junqin Huang, Linghe Kong, Senior Member, IEEE, Guihai Chen, Min-You Wu, Xue Liu, Senior Member, IEEE, Peng Zeng.
