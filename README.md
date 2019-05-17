@@ -42,7 +42,7 @@ Il sistema appena descritto, e' stato implementato sul framework di TinyOS.
 L'architettura, quindi, come gia' descritto precedemente sara' composta dal LightNode e il FullNode funzionera' mediante una normale BaseStation che collegata al PC permettera' di ricevere i messaggi e elaborarli attraverso un applicazione scritta in Java definita come FullNode.
 
 <p align="center">
-  <img width="460" height="300" src="architecture.png">
+  <img src="architecture.png">
 </p>
 
 ### Istruzioni sul LightNode :
