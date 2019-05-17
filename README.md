@@ -38,8 +38,10 @@ Il FullNode si occupa delle seguenti operazioni:
    #### ToDo:
    Aggiornare la difficoltà richiede grande conoscenza dei possibili attacchi alle blockchain, ai DAG, ai mote ed a molte altre            variabili presenti nel progetto in questione. Un'idea di come poter sviluppare quanto appena descritto la si può trovare a pagina 4,    capitolo "B. Credit-Based PoW Mechanism" nel paper [1]
 
-Il sistema appena descritto, e' stato semi-implementato sul framework di TinyOS.
-L'architettura, quindi, come gia' descritto precedemente sara' composta dal LightNode con un applicazione completamente riscritta e il FullNode funzionera' mediante una normale BaseStation che collegata al PC permettera' di ricevere i messaggi e elaborarli attraverso un applicazione scritta in Java definita come FullNode.
+Il sistema appena descritto, e' stato implementato sul framework di TinyOS.
+L'architettura, quindi, come gia' descritto precedemente sara' composta dal LightNode e il FullNode funzionera' mediante una normale BaseStation che collegata al PC permettera' di ricevere i messaggi e elaborarli attraverso un applicazione scritta in Java definita come FullNode.
+
+![][]
    
 ### Istruzioni sul LightNode :
   Per quanto riguarda, l'utilizzo dell'applicazione NesC relativo al LightNode all'interno della cartella stessa e' presente un file header dove e' possibile definire i seguenti parametri seguenti:
