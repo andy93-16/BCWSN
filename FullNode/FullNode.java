@@ -27,21 +27,23 @@ public class FullNode implements net.tinyos.message.MessageListener
   public void messageReceived(int to, Message message) 
   {
     long t = System.currentTimeMillis();
-    Date d = new Date(t);
-    System.out.println("" + d + ":" + t);
-    System.out.println("Il messaggio arrivato è: " + message.amType());
+    System.out.println("Message arrived from LightNode "+message.getSerialPacket().get_header_src()+" at "+t+" of type "+message.amType());
     
     if(message.amType() == MsgClass.TipsRequestMsg.AM_TYPE)
     {   
-    	//The mote is requesting for the DAG Tips to attach the measures to
-        System.out.println("Si tratta del # : " + message.getSerialPacket().get_header_src());
-    	TipsResponseMsg tresm = new MsgClass.TipsResponseMsg(); //Add here the DAG TIPS as object parameters
+    	/**Il LightNode ha inviato una richiesta per aggiungere un nuovo blocco al DAG
+    	   Il FullNode istanzia un messaggio di risposta per inviare gli hash dei due blocchi e
+    	   la difficolta per il calcolo del nuovo hash**/
+    	    
+    	TipsResponseMsg tresm = new MsgClass.TipsResponseMsg();
         short[] i={0,1,2,3,4,5,6,7};
         tresm.set_tipHash_1(i);
+        //tresm.set_tipHash_2();
+        //tresm.set_diff();
     	try
     	{
     		moteIF.send(message.getSerialPacket().get_header_src(), (Message) tresm);
-                System.out.println("INVIATO");
+                System.out.println("waiting from "+message.getSerialPacket().get_header_src()+" for a new block");
     	}
     	catch(Exception e)
     	{
@@ -49,29 +51,18 @@ public class FullNode implements net.tinyos.message.MessageListener
     	}
     }
     else if(message.amType() ==  MsgClass.SendTipMsg.AM_TYPE)
-    {
-        SendTipMsg stm = new MsgClass.SendTipMsg(message,message.baseOffset(),message.dataLength());
+    {   
+        SendTipMsg stm = new MsgClass.SendTipMsg();
         System.out.println("Si tratta del # : " + message.getSerialPacket().get_header_src());
         System.out.println("Contiene: " + message);
-    //The mote has sent its measures to add to the DAG
-    //TODO
-    //1) Decifra le misure
-    //2) Se la decifratura NON è ok -> DROP MESSAGE, fiducia molto in negativo
-    //3a) Se la decifratura è ok -> continua
-    //3b) Controlla che l'hash del blocco coincida con le misure ricevute
-    //3c) Se non corrisponde -> DROP MESSAGE, fiducia in negativo
-    //3d) Se tutto ok -> continua, fiducia in positivo
-    //4) Crea un nuovo Tip con le info necessarie per il blocco
-    //5) Aggiungi il blocco al DAG
-    //6) Notifica il mote della nuova Difficoltà (se cambiata) necessaria per i suoi Tip successivi
+        /**Il LightNode ha inviato il blocco contenente il nonce, il nuovo hash e le misure 
+        rilevate.
+        A questo punto, il FullNode effettua una serie di operazioni dipendenti dall'algoritmo 
+        consensus discusso nel README.
+        In base a tutto cio' inserira' i dati nel DAG.
+        **/      
     }
   }
-
-
-  /**
-    * Asks the DAG for the last 2 tips enabled to be attached by a new Tip
-    * TODO: implement this the right way
-    */ 
   private static void usage() {
     System.err.println("usage: MsgReader [-comm <source>] message-class [message-class ...]");
   }

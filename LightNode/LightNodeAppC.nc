@@ -7,6 +7,7 @@ implementation {
   
   components MainC;
   components LedsC;
+  components SHA1M;
   components new AMSenderC(AM_TIPSREQUESTMSG)  as AMTipsReqMsg;
   components new AMSenderC(AM_SENDTIPMSG) as AMSendTipMsg;
   components new AMReceiverC(AM_TIPSRESPONSEMSG) as AMTipsRespMsg;
