@@ -12,7 +12,7 @@ La struttura iniziale della blockchain è stata, quindi, rivista e sostituita da
 La scelta cade alla base dell'algoritmo di consenso scelto per risolvere le limitazioni sui dispositivi utilizzati per l'implementazione.
 Spunti per la soluzione al problema sono presenti nel testo[1].
  
-###Architettura
+### Architettura
 
 
 Il sistema progettato è attualmente centralizzato per minimizzare l'utilizzo di memoria richiesta sui Mote. Esisterà, dunque, un dispositivo detto FullNode rappresentato da un PC, che manterrà in memoria numerose variabili tra le quali l'intero DAG (BlockChain).
@@ -49,10 +49,11 @@ Quindi, si lascia la possibilita' di ulteriori implementazioni, ovvero:
    
 ### Implementazione
  
-Il sistema appena descritto e' stato implementato sul framework di TinyOS.
-Riguardo, quindi, ai dispositivi e le applicazioni installate su di essi, avremo che il FullNode funzionera' mediante una App di base
-presente in tinyos sotto il nome di "BaseStation" che permette al PC di ricevere i messaggi, elaborarli e rispondere ai LightNode.
-Su quest'ultimi, invece, e' presente un'App costruita appositamente per il sistema.
+Il sistema appena descritto e' stato implementato sul framework di TinyOS, in particolare e' stato testato per dispositivi quali telosb e XM1000 (NB: per l'XM1000 che non e' supportato dalla versione 2.1.2 e' necessaria una istallazione esterna , vedi 
+https://maitreyanaik.wordpress.com/2015/08/26/tinyos-support-for-xm1000-motes/, inoltre si consiglia all'interno della pagina di scaricare il contenuto del link https://github.com/benlammel/Vagrant_TinyOS-2.1.2_msp430-47_XM1000.
+A questo punto,senza seguire le istruzioni presenti nel README, copiare il contenuto della cartella tinyos-2.1.2 direttamente nella directory di istallazione del tinyos nel vostro workspace.
+//////
+
 
 #### LightNodeApp
 
@@ -60,15 +61,16 @@ Tale applicazione esegue un particolare task che si occupa delle seguenti operaz
 
  - Richiesta al FullNode degli hash (prevHash1, prevHash2).
  - Rilevazioni della temperatura (umidita',luce).
- - ###### ToDo:Calcolo dell'hash complessivo di: {moteID, Misurazioni,  prevHash1,  prevHash2, nonce}. 
-   - Il moteID rappresenta un ID univoco per ogni sensore WSN
-   - PrevHash1, PrevHash2 : hash relativi ai blocchi del DAG attaccati per la creazione del nuovo blocco. 
-   - Il nonce è un numero intero che provvede alla generazione di nuovi hash.
+ - ###### ToDo (Calcolo dell'hash complessivo di: {moteID, Misurazioni,  prevHash1,  prevHash2, nonce}):
+  
+    - Il moteID rappresenta un ID univoco per ogni sensore WSN
+    - PrevHash1, PrevHash2 : hash relativi ai blocchi del DAG attaccati per la creazione del nuovo blocco. 
+    - Il nonce è un numero intero che provvede alla generazione di nuovi hash.
      Maggiori informazioni sui nonce si possono trovare su <https://en.bitcoin.it/wiki/Nonce>
     
  - Cifra le informazioni di sopra in un Blocco e lo manda al FullNode
 
-##### ToDo(CIFRATURA):
+##### ToDo (Sicurezza):
  
 Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza; sviluppare un sistema di cifratura leggero sia computazionalmente che temporalmente parlando richiede un attento studio.
 Nel paper [1] a pagina 5, si discute di un eventuale implementazione che risolve questa problematica attraverso l'utilizzo di un sistema a chiave simmetrica inizializzata mediante un ulteriore processo di distribuzione basato sul concetto di chiave pubblica e privata gestita direttamente dal FullNode come Certfication Authority.
@@ -90,7 +92,7 @@ Nel paper [1] a pagina 5, si discute di un eventuale implementazione che risolve
   Per quanto riguarda il FullNode che essenzialmente nasce come una reimplementazione del MsgReader presente nel sdk java di tinyos,
   esso sostanzialmente, comunica con la base station con lo scopo di ricevere e inviare paccheti seguendo uno schema predefinito.
   
-###Struttura dei messaggi:
+### Struttura dei messaggi:
 
 Il tinyos permette di definire una moltitudine di messaggi a seconda delle esigenze, in questo caso sono stati definiti tre tipologie  messaggi (la tipologia del messaggio viene specificata attraverso l'AM_TYPE) che come si puo' pensare rappresentano una specie di three-way handshake del tcp.
  - LightNode invia un "SendTipRequestMessage" al FullNode
