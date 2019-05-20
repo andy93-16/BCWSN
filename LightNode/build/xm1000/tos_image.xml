@@ -1,13 +1,13 @@
 <tos_image>
   <ident>
-    <deluge_support>no</deluge_support>
+    <uidhash>39D2D18EL</uidhash>
     <userhash>04291321L</userhash>
-    <hostname>debian</hostname>
-    <uidhash>24516FA8L</uidhash>
-    <username>tinyos</username>
-    <appname>LightNodeAppC</appname>
-    <timestamp>5CD9AD61L</timestamp>
     <platform>xm1000</platform>
+    <hostname>debian</hostname>
+    <timestamp>5CE299D1L</timestamp>
+    <appname>LightNodeAppC</appname>
+    <username>tinyos</username>
+    <deluge_support>no</deluge_support>
   </ident>
   <image format="ihex">
 :103100005542200135D0085A8245B0123140003175

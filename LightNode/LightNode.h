@@ -1,13 +1,15 @@
 #ifndef LIGHTNODE_H
 #define LIGHTNODE_H
 enum {
+//global parameters
 AM_TIPSREQUESTMSG=10,
 AM_TIPSRESPONSEMSG=11,
 AM_SENDTIPMSG=12,
-DELTA_TIP = 10000,
-DELTA_MEASURE=250,
 NUM_MEASURES=5,
-LENGTH_HASH=8};
+LENGTH_HASH=8,
+//local parameters
+DELTA_TIP = 10000,
+DELTA_MEASURE=250,};
 
 typedef nx_struct TipsRequestMsg {;
 } TipsRequestMsg;
