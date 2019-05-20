@@ -24,52 +24,54 @@ Il FullNode si occupa delle seguenti operazioni:
  - Alle richieste di creazione di nuovi blocchi da parte dei LightNode risponde inviando gli hash di due tra i blocchi gia' esisitenti.
  
 A questo punto, si fa presente che non ci si e' voluti soffermare a fondo nell'implementazione totale del sistema poiche' il progetto nasce a scopo didattico. 
-Quindi, si lascia la possibilita' di ulteriori implementazioni a seguire:
+Quindi, si lascia la possibilita' di ulteriori implementazioni, ovvero:
 
  - ###### ToDo (Ricerca Blocchi piu' recenti)
    Nell'implementazione reale di un DAG, gli hash da inviare devono corrispondere ai blocchi meno utilizzati all'interno del DAG 
    stesso.
- - ###### ToDo (Credit-Based PoW Mechanism):
+ - ###### ToDo (Robustezza del DAG):
    Ciò equivale ad accrescere l'attendibilità dei nuovi blocchi, quelli inseriti più di recente. E' infatti possibile creare
    un blocco con misurazioni (appositamente) inesatte e cercare di inserirlo nella struttura. Viene quindi richiesta la verifica di 
    ciascun blocco, sia nel momento precedente l'aggiunta al DAG, sia in un secondo momento. Quando (l'hash di) un blocco viene 
-   usato da            molteplici altri blocchi, la sua attendibilità aumenta poiché ritenuto sufficientemente affidabile da poter far   
-   parte del DAG.
+   usato da molteplici altri blocchi, la sua attendibilità aumenta poiché ritenuto sufficientemente affidabile da poter far parte del DAG.
     
- - ###### ToDo: Bisogna decifrare il blocco, determinare la correttezza dei dati in esso presenti, aggiornare la tabella di   
-   credibilità del LightNode    e, eventualmente, aggiungere il Blocco al DAG se tutti i controlli sono risultati soddisfacenti.
+ - ###### ToDo (Verifica blocco):
+   Bisogna decifrare il blocco, determinare la correttezza dei dati in esso presenti, aggiornare la tabella di
+   credibilità del LightNode e, eventualmente, aggiungere il Blocco al DAG se tutti i controlli sono risultati soddisfacenti.
    Ricevuto il blocco di misurazioni dal LightNode, ne verifica la correttezza.
    Aggiorna la difficoltà da superare per un determinato LightNode in base all'ultimo blocco che questi ha inviato al FullNode.
    
- - ###### ToDo: Aggiornare la difficoltà richiede grande conoscenza dei possibili attacchi alle blockchain, ai DAG, ai mote ed a molte 
+ - ###### ToDo (Credit-Based PoW Mechanism): 
+   Aggiornare la difficoltà richiede grande conoscenza dei possibili attacchi alle blockchain, ai DAG, ai mote ed a molte 
    altre variabili presenti nel progetto in questione.
-   Un'idea di come poter sviluppare quanto appena descritto la si può trovare a pagina 4,    capitolo "B. Credit-Based PoW Mechanism"    
+   Un'idea di come poter sviluppare quanto appena descritto la si può trovare a pagina 4, capitolo "B. Credit-Based PoW Mechanism"
    nel paper [1].
    
 ### Implementazione
  
-Il sistema appena descritto e' stato implementato in parte sul framework di TinyOS.
-Riguardo, quindi, ai dispositivi e le applicazioni installate su di essi, avremo che il FullNode funzionera' mediante una normale App
-gia' presente in tinyos sotto il nome di "BaseStation" che permette al PC di ricevere i messaggi, elaborarli e rispondere ai LightNode.
-Su quest'ultimi, invece, e' presente un App costruita appositamente per il sistema.
+Il sistema appena descritto e' stato implementato sul framework di TinyOS.
+Riguardo, quindi, ai dispositivi e le applicazioni installate su di essi, avremo che il FullNode funzionera' mediante una App di base
+presente in tinyos sotto il nome di "BaseStation" che permette al PC di ricevere i messaggi, elaborarli e rispondere ai LightNode.
+Su quest'ultimi, invece, e' presente un'App costruita appositamente per il sistema.
 
 #### LightNodeApp
-Tale applicazione esegue un particolare task che si occupa di tali operazioni:
-Ad inziazione
- - Richiesta al FullNode degli hash (prevHash1, prevHash2)
- - Rilevazioni della temperatura (umidita',luce)
- - ####### ToDo:Calcolo dell'hash complessivo di: {moteID, Misurazioni,  prevHash1,  prevHash2, nonce}. 
+
+Tale applicazione esegue un particolare task che si occupa delle seguenti operazioni:
+
+ - Richiesta al FullNode degli hash (prevHash1, prevHash2).
+ - Rilevazioni della temperatura (umidita',luce).
+ - ###### ToDo:Calcolo dell'hash complessivo di: {moteID, Misurazioni,  prevHash1,  prevHash2, nonce}. 
    - Il moteID rappresenta un ID univoco per ogni sensore WSN
-   - PrevHash1, PrevHash2 : hash relativi ai blocchi del DAG attaccati per la vreazione del nuov blocco. 
+   - PrevHash1, PrevHash2 : hash relativi ai blocchi del DAG attaccati per la creazione del nuovo blocco. 
    - Il nonce è un numero intero che provvede alla generazione di nuovi hash.
      Maggiori informazioni sui nonce si possono trovare su <https://en.bitcoin.it/wiki/Nonce>
     
- - Cifra le informazioni di sopra in un Blocco e lo manda al FullNode **TODO1
+ - Cifra le informazioni di sopra in un Blocco e lo manda al FullNode
 
-
- #### ToDo 1(CIFRATURA) :
-    Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza; sviluppare un sistema di cifratura leggero sia computazionalmente che temporalmente parlando richiede un attento studio.
-    Nel paper [1] a pagina 5, si discute di un eventuale implementazione che risolve questa problematica attraverso l'utilizzo di un sistema a chiave simmetrica inizializzata mediante un ulteriore processo di distribuzione basato sul concetto di chiave pubblica e privata gestita direttamente dal FullNode come Certfication Authority.  
+##### ToDo(CIFRATURA):
+ 
+Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza; sviluppare un sistema di cifratura leggero sia computazionalmente che temporalmente parlando richiede un attento studio.
+Nel paper [1] a pagina 5, si discute di un eventuale implementazione che risolve questa problematica attraverso l'utilizzo di un sistema a chiave simmetrica inizializzata mediante un ulteriore processo di distribuzione basato sul concetto di chiave pubblica e privata gestita direttamente dal FullNode come Certfication Authority.
 
 <p align="center">
   <img src="architecture.png">
@@ -96,7 +98,7 @@ Il tinyos permette di definire una moltitudine di messaggi a seconda delle esige
  - LightNode una volta completata la PoW invia un "SendTipMessage".
  
   <p align="center">
-  <img src="messsage.png">
+  <img src="message.png">
 </p>
    
 ### Riferimenti   
