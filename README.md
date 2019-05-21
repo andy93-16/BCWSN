@@ -101,18 +101,36 @@ La distinzioni per parametri locali e' stata eseguita per permettere di configur
 
 Come gia' anticipato prima, il processo di compilazione per l'applicazione del FullNode non prevede solamente la compilazione del FullNode.java ma anche di alcune librerie come quelle pertinenti al DAG che troviamo in un cartella apposita e le classi java relative ai messaggi.
 Infatti, come verra' spiegato piu' avanti FullNode e LightNode non comunicano attraverso un messaggio specifico ma con piu' messaggi.
-E' per tale motivo che esistono piu' classi messaggio e che ogni volta devono essere ricostruite mediante un apposito tool denominato che mig che analizza un file contenente delle struct e ritorna una classe java con i metodi necessari all'utilizzo dei seguenti messaggi anche in java.
+E' per tale motivo che esistono piu' classi messaggio e che ogni volta devono essere ricostruite mediante un apposito tool denominato mig che analizza un file contenente delle struct e ritorna una classe java con i metodi necessari alla manipolazione di quella tipologia di messaggi anche in java.
 
 ```
-SUBDIRS = DAG MsgClass
+LIGHTNODE_H= $(TOSROOT)/apps/BCWSN/LightNode/LightNode.h
 
-FINAL_TARGETS= FullNode.class FullNode.java
+OTHER_CLEAN = rmMsg $(wildcard *.java) TipsRequestMsg.java TipsResponseMsg.java SendTipMsg.java
 
-ROOT = ../../../support/sdk/java
+JavacMsg:
+	javac *.java
+
+TipsRequestMsg.java:
+	mig java -java-classname=MsgClass.TipsRequestMsg $(LIGHTNODE_H) TipsRequestMsg -o TipsRequestMsg.java
+
+TipsResponseMsg.java:
+	mig java -java-classname=MsgClass.TipsResponseMsg $(LIGHTNODE_H) TipsResponseMsg -o TipsResponseMsg.java
+
+SendTipMsg.java:
+	mig java -java-classname=MsgClass.SendTipMsg $(LIGHTNODE_H) SendTipMsg -o SendTipMsg.java
+
+rmMsg:	
+	rm *.java
+        
+
+ROOT = ../../../../support/sdk/java
 
 include $(ROOT)/Makefile.include
 
 ```
+
+ 
  
   
 ### Struttura dei messaggi:
