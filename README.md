@@ -33,6 +33,8 @@ Quindi, si lascia la possibilita' di ulteriori implementazioni, che sono element
    credibilità del LightNode e, eventualmente, aggiungere il Blocco al DAG se tutti i controlli sono risultati soddisfacenti.
    
   - ###### ToDo (Credit-Based PoW Mechanism): 
+   Sulla base di voler assegnare una difficolta' maggiore o minore al seconda del comportamento del nodo, questo per evitare elementi 
+   malevoli nel gruppo dei LightNode sarebbe doveroso implementare un algoritmo che segue delle regole particolari per l'assegnazione. 
    Un'idea di come poter sviluppare quanto appena descritto la si può trovare a pagina 4, capitolo "B. Credit-Based PoW Mechanism"
    nel paper [1].
 
@@ -54,14 +56,28 @@ Quindi, si lascia la possibilita' di ulteriori implementazioni, che sono element
     - Il nonce è un numero intero che provvede alla generazione di nuovi hash.
      Maggiori informazioni sui nonce si possono trovare su [3]
  - Costruzione del nuovo blocco ed invio al FullNode
+ - ##### ToDo (Warning compilazione)
+   Nell'implementazione il file LightNodeApp.nc contiene delle righe :
+   ```
+   components new SensirionSht11C() as TempHumSensor;
+  //components new HamamatsuS10871TsrC() as LightSensor;
+  //components new VoltageC() as Battery;
  
-##### ToDo (Sicurezza):
+   ```
+   dove viene chiaramente espresso l'istanziazione dei componenti adibiti a seconda del caso alle misurazioni,
+   a tal riguardo sarebbe piu' utile sfruttare direttamente un interfaccia che non risulta pero' implementata per
+   la classe di dispositivi utilizzati in fase di test.
+ - ###### ToDo (Flessibilita' degli hash):
+   Per ragioni relative alle tempistiche di implementazione nei codici rilasciati non e' possibile definire una lunghezza degli hash,
+   quindi nel caso si volessero utilizzare hash piu' piccoli o piu grandi si dovrebbe ricorrere all'utilizzo di array.
+  
+##### General ToDo (Sicurezza del sistema):
  
 Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza.
 Sviluppare un sistema di cifratura leggero da applicare per lo scambio di informazioni e' richiede un attento studio.
 Nel paper [1] a pagina 5, si discute di un eventuale implementazione che risolve questa problematica attraverso l'utilizzo di un sistema a chiave simmetrica inizializzata mediante un ulteriore processo di distribuzione basato sul concetto di chiave pubblica e privata gestita direttamente dal FullNode come Certfication Authority.
    
-### Implementazione
+### Implementation
  
 Il sistema appena descritto e' stato implementato sul framework TinyOS, in particolare e' stato testato per dispositivi quali telosb e XM1000.
 
@@ -69,9 +85,9 @@ NB: per l'XM1000 che non e' supportato dalla versione 2.1.2 e' necessaria una is
 https://maitreyanaik.wordpress.com/2015/08/26/tinyos-support-for-xm1000-motes/, inoltre si consiglia all'interno della pagina di scaricare il contenuto del link https://github.com/benlammel/Vagrant_TinyOS-2.1.2_msp430-47_XM1000.
 A questo punto,senza seguire le istruzioni presenti nel README, copiare il contenuto della cartella tinyos-2.1.2 direttamente nella directory di istallazione del tinyos nel vostro workspace.
 
-Ora, dando uno sguardo a quelle che sono le App preparate in nesC e in Java facendo riferimento all'architettura vista prima.
-Troviamo che il LightNode e' composto da un'unica applicazione, mentre il FullNode sara' composto da un'app nativa denominata BaseStation
-che funge da ponte tra la trasmissione radio e la serial del PC.
+Ora, dando uno sguardo a quelle che sono le App preparate in nesC e in Java facendo riferimento all'architettura vista prima,
+troviamo che il LightNode e' composto da un'unica applicazione, mentre il FullNode sara' composto da un'app nativa denominata BaseStation
+installata sul mote che funge da ponte tra la trasmissione radio e la serial del PC.
 La BaseStation, quindi, comunichera' con un applicazione Java denominata FullNode che sfrutta la BS, e che si tratta di un estensione del MsgReader presente nella sdk java del TinyOS.
 
 <p align="center">
@@ -80,24 +96,23 @@ La BaseStation, quindi, comunichera' con un applicazione Java denominata FullNod
  
 
 ### LightNodeApp :
+
   Per cio' che riguarda l'applicazione NesC relativa al LightNode, all'interno della directory e' presente un file header dove e' possibile definire alcuni parametri per configurare il nodo, questi parametri sono distinti in parametri globali e locali:
 La distinzioni per parametri locali e' stata eseguita per permettere di configurare alcuni valori del nodo sulle misurazioni e sull'esecuzione del task makeTip. 
- - DELTA_TIP : definisce il tempo di attesa massimo per l'invio di un nuovo tipo.
- - DELTA_MEASURES : intervallo di tempo tra una rilevazione e l'altra delle temperature.
+ - DELTA_TIP (Local): definisce il tempo di attesa massimo per l'invio di un nuovo tipo .
+ - DELTA_MEASURES (Local): intervallo di tempo tra una rilevazione e l'altra delle temperature .
  E' stato utilizzato, invece, il termine globale per indicare tutti quei parametri che anche il FullNode deve conoscere affinche' LightNodes e FullNode possano comunicare senza ottenere degli errori.
  Percio' e' strettamente necessario che quando vengono modificati questi parametri siano ricompilate entrambe le applicazioni.
  Piu' avanti verra' spiegato come farlo e come e' stato organizzato il makefile.
  A seguire sono elencate le definizioni:
  
- - NUM_MEASURES : numero di misurazioni effettuate da inviare (di default e' stato scelto un numero di 5 misure per problematiche relative alla grandezza max del payload del messaggio poiche di defalult e' imposato fino a 26 byte).
- - LENGTH_HASH : seguendo le linee di implementazione del tinyos e' possibile inviare solo tipi semplici (sono percio' escluse stringhe e char), e' stato scelto percio' di rappresentare un hash come un array di uint8_t.
- Scegliendo una lunghezza di 64 bit sara' necessaria una LENGTH_HASH=8 (default).
+ - NUM_MEASURES (Global): numero di misurazioni effettuate da inviare (di default e' stato scelto un numero di 5 misure per problematiche relative alla grandezza max del payload del messaggio poiche di defalult e' imposato fino a 26 byte).
  
 ##### Makefile per FullNode
 
 Come gia' anticipato prima, il processo di compilazione per l'applicazione del FullNode non prevede solamente la compilazione del FullNode.java ma anche di alcune librerie come quelle pertinenti al DAG che troviamo in un cartella apposita e le classi java relative ai messaggi.
 Infatti, come verra' spiegato piu' avanti FullNode e LightNode non comunicano attraverso un messaggio specifico ma con piu' messaggi.
-E' per tale motivo che esistono piu' classi messaggio e che ogni volta devono essere ricostruite mediante un apposito tool denominato mig che analizza un file contenente delle struct e ritorna una classe java con i metodi necessari alla manipolazione di quella tipologia di messaggi anche in java.
+E' per tale motivo che esistono piu' classi messaggio e che ogni volta devono essere ricostruite mediante un apposito tool denominato mig che analizza il file LightNode.h contenente delle nx_struct (struct appositamente create per la definzione del payload pertinente agli ActiveMessage vedi manuale TinyOS ) e ritorna una classe java con i metodi necessari alla sua manipolazione.
 
 ```
 LIGHTNODE_H= $(TOSROOT)/apps/BCWSN/LightNode/LightNode.h
@@ -125,20 +140,60 @@ ROOT = ../../../../support/sdk/java
 include $(ROOT)/Makefile.include
 
 ```
-
+In breve, viene definito il path al LightNode.h, differentemente dalla norma attraverso make clean verranno anche cancellati i file java , istruzioni relative all'esecuzione di mig relativi ai messaggi che verranno chiamate appena dopo il clean.
+Nota: l'inserimento di "MsgClass" dopo -java-classname per specificare la definizione del package.
  
- 
+Riguardo al makefile per il LightNode non c'e' da spiegare niente di importante. 
   
-### Struttura dei messaggi:
+### Comunicazione tra le App:
+
+
+<p align="center">
+<img src="data/message.png">
+</p>
 
 Il tinyos permette di definire una moltitudine di messaggi a seconda delle esigenze, in questo caso sono stati definiti tre tipologie  messaggi (la tipologia del messaggio viene specificata attraverso l'AM_TYPE) che come si puo' pensare rappresentano una specie di three-way handshake del tcp.
  - LightNode invia un "SendTipRequestMessage" al FullNode
  - FullNode risponde con un "TipResponseMessage" al LightNode.
  - LightNode una volta completata la PoW invia un "SendTipMessage".
  
+Nota: Rispetto al LightNode, il FullNode non esegue una ACK del messaggio, quindi un messaggio per qualche motivo non consegnato non verra' mai reinviato dal FullNode, diverso il discorso per il LightNode che, invece, rimane in attesa di una risposta.
+
+Potrebbe essere un ToDo ;)
+
+###Istruzioni sull'uso
+
+I codici presenti nel repository hanno una grande dipendenza dai makerule e gli sdk del TinyOS, percio' dovranno rispettare 
+uno specifico path per poter essere buildati e installati ed eseguiti (caso del FullNode).
+E' necessario percio prima di eseguire il git clone cambiare directory e posizionarsi all'interno della cartella apps del tinyos,
+dovresti avere qualcosa di simile:
+
+```
+tinyos@debian:~/tinyos-main/apps$
+
+```
+successivamente:
+```
+git clone https://github.com/andy93-16/BCWSN
+```
+A questo punto, sara' prima necessario installare la LightNodeApp su un mote,
+spostandoci all'interno della directory LightNode, eseguire:
+```
+make "modellomote" install."idchesivuoleassegnare",/dev/ttyUSBx
+```
+questo per terminali linux (nel caso telosb make telosb install.y bsl,/dev/ttyUSBx),
+per terminali Windows vedi manuale.
+Per quanto riguarda il FullNode e' necessario prima installare su un altro nodo l'app BaseStation che e' nativa nel framework
+seguendo le stesse istruzione definite prima.
+Dopo aver fatto cio' per inizializzare il FullNode bisogna spostarsi nella directory FullNode ed eseguire:
+```
+java FullNode -comm serial@/dev/ttyUSBx:"baudrate"
+```
+arrivati a questo punto si dovrebbe avere una situazione simile a quella in foto:
 <p align="center">
-<img src="data/message.png">
+<img src="data/screen.png">
 </p>
+
    
 ### Riferimenti   
 [1] - “Towards Secure Industrial IoT: Blockchain System with Credit-Based Consensus Mechanism” a cura di Junqin Huang, Linghe Kong, Senior Member, IEEE, Guihai Chen, Min-You Wu, Xue Liu, Senior Member, IEEE, Peng Zeng.
