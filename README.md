@@ -58,12 +58,12 @@ Quindi, si lascia la possibilita' di ulteriori implementazioni, che sono element
  - Costruzione del nuovo blocco ed invio al FullNode
  - ##### ToDo (Warning compilazione)
    Nell'implementazione il file LightNodeApp.nc contiene delle righe :
-   ```
+  ```
    components new SensirionSht11C() as TempHumSensor;
-  //components new HamamatsuS10871TsrC() as LightSensor;
-  //components new VoltageC() as Battery;
- 
-   ```
+   //components new HamamatsuS10871TsrC() as LightSensor;
+   //components new VoltageC() as Battery;
+  ```
+  
    dove viene chiaramente espresso l'istanziazione dei componenti adibiti a seconda del caso alle misurazioni,
    a tal riguardo sarebbe piu' utile sfruttare direttamente un interfaccia che non risulta pero' implementata per
    la classe di dispositivi utilizzati in fase di test.
@@ -161,7 +161,7 @@ Nota: Rispetto al LightNode, il FullNode non esegue una ACK del messaggio, quind
 
 Potrebbe essere un ToDo ;)
 
-###Istruzioni sull'uso
+### Istruzioni sull'uso
 
 I codici presenti nel repository hanno una grande dipendenza dai makerule e gli sdk del TinyOS, percio' dovranno rispettare 
 uno specifico path per poter essere buildati e installati ed eseguiti (caso del FullNode).
