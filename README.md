@@ -158,8 +158,8 @@ Il tinyos permette di definire una moltitudine di messaggi a seconda delle esige
  - LightNode una volta completata la PoW invia un "SendTipMessage".
  
 Nota: Rispetto al LightNode, il FullNode non esegue una ACK del messaggio, quindi un messaggio per qualche motivo non consegnato non verra' mai reinviato dal FullNode, diverso il discorso per il LightNode che, invece, rimane in attesa di una risposta.
-
 Potrebbe essere un ToDo ;)
+Inoltre, faccio nota che il LightNode in ogni TipRequest invia una broadcast e solo successivamnete alla risposta da parte del FullNode e conseguente conoscenza della suo ID, inserisce la destinazione del messaggio.
 
 ### Istruzioni sull'uso
 
@@ -194,6 +194,8 @@ arrivati a questo punto si dovrebbe avere una situazione simile a quella in foto
 <img src="data/screen.png">
 </p>
 
+Dove e' visibilmente chiaro che il nostro sistema e' composto da un LightNode che comunica seuqnzialmente con il FullNode.
+Il FullNode dice di aver ricevuto un TipRequest, il FullNode si mette in attesa di una SendTip e la riceve con conseguente stampa.
    
 ### Riferimenti   
 [1] - “Towards Secure Industrial IoT: Blockchain System with Credit-Based Consensus Mechanism” a cura di Junqin Huang, Linghe Kong, Senior Member, IEEE, Guihai Chen, Min-You Wu, Xue Liu, Senior Member, IEEE, Peng Zeng.
