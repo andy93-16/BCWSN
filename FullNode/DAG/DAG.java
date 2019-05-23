@@ -12,7 +12,7 @@ public class DAG
 	 * Core element of the class. 
 	 * Keeps track of all Blocks created in a pair <Hash, Block>
 	 */
-	private HashMap<int[], Block> blockChain = new HashMap<int[], Block>();
+	private HashMap<Long, Block> blockChain = new HashMap<Long, Block>();
 	
 	/** 
 	 * Support HashMap. 
@@ -23,10 +23,10 @@ public class DAG
 	 * In order to create a solid and trustworthy DAG one should aim to verify 
 	 * the Least Used Blocks hence retrieving the 2 minimum Blocks' values from this Map.
 	 * 
-	 * int[] = The old Block is here represented by its own Hash.
+	 * short[] = The old Block is here represented by its own Hash.
 	 * Integer = The amount of new Blocks that have verified the old Block's Hash
 	 */
-	private HashMap<int[], Integer> hashesList = new HashMap<int[], Integer>();
+	private HashMap<Long, Integer> hashesList = new HashMap<Long, Integer>();
 	
 	
 	/**
@@ -39,13 +39,16 @@ public class DAG
 	/**
 	 * Record the 2 previous hashes assigned to a specific mote for its next block
 	 */
-	private HashMap<Integer, int[][]> mote_prevHashes = new HashMap<Integer, int[][]>();
+	public HashMap<Integer, Long[]> mote_prevHashes = new HashMap<Integer, Long[]>();
+	
+	/** Initial difficulty for each mote */
+	private final Integer initDifficulty = 2;
 	
 	/** Minimum difficulty to meet for each mote */
-	private final int minDifficulty = 1;
+	private final Integer minDifficulty = 0;
 	
 	/** Maximum difficulty to meet for each mote */
-	private final int maxDifficulty = 6;
+	private final Integer maxDifficulty = 7;
 	
 	
 	/**
@@ -65,7 +68,7 @@ public class DAG
 	 * 
 	 * @param txtFile Is it a path to the file? Is it the entire txt file? Dunno, help yourself
 	 */
-	public DAG(Object txtFile)
+	private DAG(Object txtFile)
 	{
 		//ToDo;
 		//this.blockChain = txtFile.getBlockChain();
@@ -128,18 +131,18 @@ public class DAG
 	 * Recording the moteID and its designated tips leaves less work for the mote. 
 	 * @return Two random hashes from the DAG
 	 */
-	public int[][] getTips(int moteID)
+	public Long[] getTips(int moteID)
 	{
 		Random rng = new Random();
 		Object[] hashes = this.hashesList.keySet().toArray();
-		int[] h1 = (int[]) hashes[rng.nextInt(this.getTotalBlocks())];
-		int[] h2;
+		Long h1 = (Long) hashes[rng.nextInt(this.getTotalBlocks())];
+		Long h2;
 		do
 		{
-			h2 = (int[]) hashes[rng.nextInt(this.getTotalBlocks())];
+			h2 = (Long) hashes[rng.nextInt(this.getTotalBlocks())];
 		}
 		while(h2.equals(h1));
-		int[][] tips = new int[][] {h1, h2};
+		Long[] tips = new Long[] {h1, h2};
 		this.mote_prevHashes.put(moteID, tips);
 		return tips;
 	}
@@ -202,9 +205,9 @@ public class DAG
 	 * @param moteID The mote to judge
 	 * @param d The added difficulty to give. Can be positive (to punish) or negative (to reward).
 	 */
-	private void updateModeDifficulty(int moteID, int d)
+	private void updateMoteDifficulty(int moteID, int d)
 	{
-		int previousDifficulty = this.moteDifficulty.get(moteID);
+		int previousDifficulty = this.getMoteDifficulty(moteID);
 		if(d > 0)
 		{
 			if(previousDifficulty + d >= this.maxDifficulty)
@@ -237,6 +240,11 @@ public class DAG
 	 */
 	public int getMoteDifficulty(int moteID)
 	{
+		if(!this.moteDifficulty.containsKey(moteID))
+		{
+			this.moteDifficulty.put(moteID, this.initDifficulty);
+			return this.initDifficulty;
+		}
 		return this.moteDifficulty.get(moteID);
 	}
 }

@@ -1,6 +1,6 @@
 # Blockchain on WSN
 
-### Scopo del progetto: Costruire una Blockchain per memorizzare misurazioni effettuate da mote
+### Scopo del progetto: Implementazione di una Blockchain per memorizzare misure effettuate da Wireless Sensors
 
 ##### Alcune definizioni:
 Una Blockchain è, letteralmente, una catena di Blocchi legati tra loro mediante l'hash di un blocco precedente.
@@ -8,52 +8,47 @@ E' un sistema distribuito tra tutti gli utenti che partecipano alla creazione di
 
 ##### Problematiche:
 Considerando le notevoli limitazioni hardware dei sensori WSN, si è deciso di porre alcune modifiche all'idea base della blockchain.
-La struttura iniziale della blockchain è stata, quindi, rivista e sostituita dal DAG – Direct Acyclic Graph che corrisponde ad un grafo privo di cicli al suo interno e diretto.
-La scelta cade alla base dell'algoritmo di consenso scelto per risolvere le limitazioni sui dispositivi utilizzati per l'implementazione.
-Spunti per la soluzione al problema sono presenti nel testo[1].
+La struttura iniziale della blockchain è stata, quindi, rivista e sostituita dal DAG – Direct Acyclic Graph che corrisponde ad un grafo diretto privo di cicli al suo interno per permettere l'inserimento dei blocchi da parte di piu' nodi allo stesso momento.
+Un'altra scelta , invece, cade alla base dell'algoritmo di consenso, in quanto se normalmente in una blockchain l'impiego del PoW ha sempre potuto risolvere ogni problema, per i dispositivi a disposizione se ne sarebbe creato uno.
+E' cosi che, invece, e' stato scelto di ottimizzare il PoW stesso con un meccanismo Credit-Based PoW.
+
+Spunti per questa soluzione sono presenti nel'articolo [1].
  
 ### Architettura
 
+Il sistema progettato è attualmente centralizzato data la scarsa disponibilita' di memoria sui Mote. Esisterà, dunque, un dispositivo differente dagli altri detto FullNode (si trattera' di un PC), che sara' il cervello dell'intero sistema.
+Il DAG ("tangle") di blocchi che da adesso verranno definiti come "tip" e' la struttura dati su cui si poggera' il FullNode per memorizzare le informazioni ottenuti dai nodi. 
 
-Il sistema progettato è attualmente centralizzato per minimizzare l'utilizzo di memoria richiesta sui Mote. Esisterà, dunque, un dispositivo detto FullNode rappresentato da un PC, che manterrà in memoria numerose variabili tra le quali l'intero DAG (BlockChain).
-
+Segue la definizioni dei task eseguiti sui singoli nodi:
 #### FullNode
-Il FullNode si occupa delle seguenti operazioni:
- 
+
  - Inizializza il DAG ( vengono istanziati i due blocchi genesi, si tratta dei blocchi iniziali necessari per costruiure il DAG )
  - Alle richieste di creazione di nuovi blocchi da parte dei LightNode risponde inviando gli hash di due tra i blocchi gia' esisitenti.
  
 A questo punto, si fa presente che non ci si e' voluti soffermare a fondo nell'implementazione totale del sistema poiche' il progetto nasce a scopo didattico. 
-Quindi, si lascia la possibilita' di ulteriori implementazioni, ovvero:
+Quindi, si lascia la possibilita' di ulteriori implementazioni, che sono elementi essenziali al funzionamento completo :
 
- - ###### ToDo (Ricerca Blocchi piu' recenti)
-   Nell'implementazione reale di un DAG, gli hash da inviare devono corrispondere ai blocchi meno utilizzati all'interno del DAG 
-   stesso.
- - ###### ToDo (Robustezza del DAG):
-   Ciò equivale ad accrescere l'attendibilità dei nuovi blocchi, quelli inseriti più di recente. E' infatti possibile creare
-   un blocco con misurazioni (appositamente) inesatte e cercare di inserirlo nella struttura. Viene quindi richiesta la verifica di 
-   ciascun blocco, sia nel momento precedente l'aggiunta al DAG, sia in un secondo momento. Quando (l'hash di) un blocco viene 
-   usato da molteplici altri blocchi, la sua attendibilità aumenta poiché ritenuto sufficientemente affidabile da poter far parte del DAG.
-    
  - ###### ToDo (Verifica blocco):
    Bisogna decifrare il blocco, determinare la correttezza dei dati in esso presenti, aggiornare la tabella di
    credibilità del LightNode e, eventualmente, aggiungere il Blocco al DAG se tutti i controlli sono risultati soddisfacenti.
-   Ricevuto il blocco di misurazioni dal LightNode, ne verifica la correttezza.
-   Aggiorna la difficoltà da superare per un determinato LightNode in base all'ultimo blocco che questi ha inviato al FullNode.
    
- - ###### ToDo (Credit-Based PoW Mechanism): 
-   Aggiornare la difficoltà richiede grande conoscenza dei possibili attacchi alle blockchain, ai DAG, ai mote ed a molte 
-   altre variabili presenti nel progetto in questione.
+  - ###### ToDo (Credit-Based PoW Mechanism): 
    Un'idea di come poter sviluppare quanto appena descritto la si può trovare a pagina 4, capitolo "B. Credit-Based PoW Mechanism"
    nel paper [1].
+
+ - ###### ToDo (Ricerca blocchi piu' recenti):
+   Nell'implementazione reale di un DAG, gli hash da inviare devono corrispondere ai blocchi meno utilizzati all'interno del DAG 
+   stesso.
+   Ciò equivale ad accrescere l'attendibilità dei nuovi blocchi, quelli inseriti più di recente.Quando (l'hash di) un blocco viene 
+   usato da molteplici altri blocchi, la sua attendibilità aumenta poiché ritenuto sufficientemente affidabile da poter far parte del DAG.
+    
    
 #### LightNode
 
-Le operazioni che invece vengono svolte dai sensori:
-
  - Richiesta al FullNode degli hash (prevHash1, prevHash2).
  - Rilevazioni della temperatura (umidita',luce).
- - ###### ToDo (Calcolo dell'hash complessivo di: {moteID, Misurazioni,  prevHash1,  prevHash2, nonce}):
+ 
+ - Calcolo dell'hash complessivo di: {moteID, Misurazioni,  prevHash1,  prevHash2, nonce}):
     - Il moteID rappresenta un ID univoco per ogni sensore WSN
     - PrevHash1, PrevHash2 : hash relativi ai blocchi del DAG attaccati per la creazione del nuovo blocco. 
     - Il nonce è un numero intero che provvede alla generazione di nuovi hash.
@@ -62,12 +57,13 @@ Le operazioni che invece vengono svolte dai sensori:
  
 ##### ToDo (Sicurezza):
  
-Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza; sviluppare un sistema di cifratura leggero sia computazionalmente che temporalmente parlando richiede un attento studio.
+Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza.
+Sviluppare un sistema di cifratura leggero da applicare per lo scambio di informazioni e' richiede un attento studio.
 Nel paper [1] a pagina 5, si discute di un eventuale implementazione che risolve questa problematica attraverso l'utilizzo di un sistema a chiave simmetrica inizializzata mediante un ulteriore processo di distribuzione basato sul concetto di chiave pubblica e privata gestita direttamente dal FullNode come Certfication Authority.
    
 ### Implementazione
  
-Il sistema appena descritto e' stato implementato sul framework di TinyOS, in particolare e' stato testato per dispositivi quali telosb e XM1000.
+Il sistema appena descritto e' stato implementato sul framework TinyOS, in particolare e' stato testato per dispositivi quali telosb e XM1000.
 
 NB: per l'XM1000 che non e' supportato dalla versione 2.1.2 e' necessaria una istallazione esterna , vedi 
 https://maitreyanaik.wordpress.com/2015/08/26/tinyos-support-for-xm1000-motes/, inoltre si consiglia all'interno della pagina di scaricare il contenuto del link https://github.com/benlammel/Vagrant_TinyOS-2.1.2_msp430-47_XM1000.
@@ -79,7 +75,7 @@ che funge da ponte tra la trasmissione radio e la serial del PC.
 La BaseStation, quindi, comunichera' con un applicazione Java denominata FullNode che sfrutta la BS, e che si tratta di un estensione del MsgReader presente nella sdk java del TinyOS.
 
 <p align="center">
-  <img src="architecture.png">
+  <img src="data/architecture.png">
 </p>
  
 
@@ -141,7 +137,7 @@ Il tinyos permette di definire una moltitudine di messaggi a seconda delle esige
  - LightNode una volta completata la PoW invia un "SendTipMessage".
  
 <p align="center">
-<img src="message.png">
+<img src="data/message.png">
 </p>
    
 ### Riferimenti   

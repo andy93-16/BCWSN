@@ -8,7 +8,6 @@ import MsgClass.*;
 public class FullNode implements net.tinyos.message.MessageListener 
 {
   private DAG dag;
-  
   private MoteIF moteIF;
   
   public FullNode(String source) throws Exception {
@@ -22,10 +21,11 @@ public class FullNode implements net.tinyos.message.MessageListener
 
   public void start() 
   {
-   ;
+    dag=new DAG();
   }
   public void messageReceived(int to, Message message) 
   {
+    int moteID = message.getSerialPacket().get_header_src();
     long t = System.currentTimeMillis();
     System.out.println("Message arrived from LightNode "+message.getSerialPacket().get_header_src()+" at "+t+" of type "+message.amType());
     
@@ -36,13 +36,13 @@ public class FullNode implements net.tinyos.message.MessageListener
     	   la difficolta per il calcolo del nuovo hash**/
     	    
     	TipsResponseMsg tresm = new MsgClass.TipsResponseMsg();
-        short[] i={0,1,2,3,4,5,6,7};
-        tresm.set_tipHash_1(i);
-        //tresm.set_tipHash_2();
-        //tresm.set_diff();
+        Long[] h =dag.getTips(moteID);
+    	tresm.set_tipHash_1(h[0]);
+        tresm.set_tipHash_2(h[1]);
+        tresm.set_dif(dag.getMoteDifficulty(moteID));
     	try
     	{
-    		moteIF.send(message.getSerialPacket().get_header_src(), (Message) tresm);
+    		moteIF.send(moteID, (Message) tresm);
                 System.out.println("waiting from "+message.getSerialPacket().get_header_src()+" for a new block");
     	}
     	catch(Exception e)
@@ -53,7 +53,7 @@ public class FullNode implements net.tinyos.message.MessageListener
     else if(message.amType() ==  MsgClass.SendTipMsg.AM_TYPE)
     {   
         SendTipMsg stm = new MsgClass.SendTipMsg();
-        System.out.println("Si tratta del # : " + message.getSerialPacket().get_header_src());
+        System.out.println("Si tratta del # : " + moteID);
         System.out.println("Contiene: " + message);
         /**Il LightNode ha inviato il blocco contenente il nonce, il nuovo hash e le misure 
         rilevate.
@@ -61,8 +61,32 @@ public class FullNode implements net.tinyos.message.MessageListener
         consensus discusso nel README.
         In base a tutto cio' inserira' i dati nel DAG.
         **/      
+        Long[] hashes = dag.mote_prevHashes.get(moteID);
+        
+        Block b = new Block(
+        	moteID,
+        	System.currentTimeMillis(),
+        	stm.get_temp(),
+        	hashes[0],
+        	hashes[1],
+        	stm.get_tipHash(),
+        	stm.get_nonce()
+        	);
+        dag.addToDAG(b);
     }
   }
+  
+  private static int[] convertIntToShortArray(short[] in)
+  {
+  	int[] out = new int[in.length];
+  	for(int i = 0; i < in.length; i++)
+  	{
+  		out[i] = (int) in[i];
+  	}
+  	return out;
+  }
+  
+  
   private static void usage() {
     System.err.println("usage: MsgReader [-comm <source>] message-class [message-class ...]");
   }
@@ -124,7 +148,7 @@ public class FullNode implements net.tinyos.message.MessageListener
     }
     //FineParteCaricamentoMessaggi
     FullNode fn = new FullNode(source);
-    fn.dag=new DAG();
+    fn.start();
     Enumeration msgs = v.elements();
     while (msgs.hasMoreElements()) 
     {

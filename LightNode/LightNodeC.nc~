@@ -51,7 +51,69 @@ implementation{
       if(call AMTipsReqMsg.send(dest,&pkt, sizeof(TipsRequestMsg))==SUCCESS){}      
   }
   
-   
+  
+  
+  uint8_t * computeHash(uint8_t h1[], uint8_t h2[], uint16_t nonce, uint16_t meas[])
+  {  
+//  	int totalMeasures = sizeof(meas);
+	int arrayLength = 10; //2 Elems for h1, 2 elems for h2, 1 elem for nonce, 5 for the measures
+//    char x[10];
+//    x[0] = (char) h1[0];
+//    x[1] = h1[1];
+//    x[2] = h2[0];
+//    x[3] = h2[1];
+//    x[4] = nonce; 
+//	int z;
+//	for(z = 0; z < 5; ++z)
+//	{
+//		x[5+z] = meas[z];
+//	}
+	char x[] = {h1[0], h1[1], h2[0], h2[1], nonce, meas[0], meas[1], meas[2], meas[3], meas[4]};
+	char out[2];
+	char h;
+	int output = 1;
+	static const unsigned char T[256] = 
+	{
+		// 0-255 shuffled in any (random) order suffices
+		98,  6, 85,150, 36, 23,112,164,135,207,169,  5, 26, 64,165,219,  //  1
+		61, 20, 68, 89,130, 63, 52,102, 24,229,132,245, 80,216,195,115,  //  2
+		90,168,156,203,177,120,  2,190,188,  7,100,185,174,243,162, 10,  //  3
+		237, 18,253,225,  8,208,172,244,255,126,101, 79,145,235,228,121, //  4
+		123,251, 67,250,161,  0,107, 97,241,111,181, 82,249, 33, 69, 55, //  5
+		59,153, 29,  9,213,167, 84, 93, 30, 46, 94, 75,151,114, 73,222,  //  6
+		197, 96,210, 45, 16,227,248,202, 51,152,252,125, 81,206,215,186, //  7
+		39,158,178,187,131,136,  1, 49, 50, 17,141, 91, 47,129, 60, 99,  //  8
+		154, 35, 86,171,105, 34, 38,200,147, 58, 77,118,173,246, 76,254, //  9
+		133,232,196,144,198,124, 53,  4,108, 74,223,234,134,230,157,139, // 10
+		189,205,199,128,176, 19,211,236,127,192,231, 70,233, 88,146, 44, // 11
+		183,201, 22, 83, 13,214,116,109,159, 32, 95,226,140,220, 57, 12, // 12
+		221, 31,209,182,143, 92,149,184,148, 62,113, 65, 37, 27,106,166, // 13
+		3, 14,204, 72, 21, 41, 56, 66, 28,193, 40,217, 25, 54,179,117,   // 14
+		238, 87,240,155,180,170,242,212,191,163, 78,218,137,194,175,110, // 15
+		43,119,224, 71,122,142, 42,160,104, 48,247,103, 15, 11,138,239   // 16
+	};
+	int j;
+    for (j = 0; j < arrayLength; ++j) 
+	{
+        h = T[(x[0] + j) % 256];
+        h = T[h ^ x[4]]; //x[4] = nonce;
+        if(h != 0)
+        {
+            output *= h;
+        }
+    }
+      
+    output = output % (65536);
+    if(output < 0)
+    {
+        output = 0 - output;
+    }
+    out[0] = output/256;
+    out[1] = output%256;
+    return out;
+  } 
+  
+  
   /**
   H1 e H2 rappresentano i due array di int ricevuti dal FullNode che fanno riferimento
   agli hash dei blocchi designati ad essere contenuti nel nuovo blocco.
@@ -61,9 +123,33 @@ implementation{
   Il risultato sara' un nonce calcolato inserendo come informazioni i due hash,
   la difficolta' e il node_ID ottenibile mediante la variabile TOS_NODE_ID.
   */
+  uint16_t computeNonce(uint8_t h1[], uint8_t h2[], uint8_t difficulty, uint16_t meas[])
+  {
+    uint8_t *p;
+  	uint16_t nonce = 0;
+  	uint8_t hash[2];
+  	
+  	uint8_t difficultyValue = 2;
+  	int i;
+  	for(i = 0; i < difficulty; ++i)
+  	{
+  		difficultyValue *= 2;
+  	}
+  	difficultyValue *= 2;
+  	difficultyValue -= 2; //Ranges in [0, 254] interval for a given difficulty in [0, 7]
+  	do
+  	{
+  		p = computeHash(h1, h2, nonce, meas);
+  		memcpy(hash,*p,sizeof(*p));
+  	
+  		++nonce;
+  	}
+  	while(hash[0] <= difficultyValue);
+  	return nonce;
+  }
   
 
-  void sendMakedTip(uint16_t dest,uint16_t nonce,uint64_t h){   /**Invio del blocco costruito 
+  void sendMakedTip(uint16_t dest,uint16_t nonce,uint8_t h[]){   /**Invio del blocco costruito 
       contente hash,nonce e misure.
       Il node id e il timestamp verranno inseriti direttamente dal FullNode
       dopo aver ricalcolato la validita dell'hash.
@@ -73,8 +159,8 @@ implementation{
 	return;
       }
       stmpkt->nonce=nonce;
-      stmpkt->tipHash=h;
-      memcpy(stmpkt->temp,measures,sizeof(measures));
+      memcpy(stmpkt->tipHash,h,LENGTH_HASH);
+      memcpy(stmpkt->temp,measures,NUM_MEASURES);
       if (call AMSendTipMsg.send(dest,&pkt, sizeof(SendTipMsg)) == SUCCESS) {} 
   }
   
@@ -127,17 +213,15 @@ implementation{
   event void Temp.readDone( error_t result, uint16_t val ){ 
   //Ad ogni rilevazione della temperatura effettuata correttamente, viene aggiornato l'array delle misure.
      if (result == SUCCESS){
-        measures[count_measures]=val;
-        count_measures++;
         setLeds(count_measures);
-        
-        
+        measures[count_measures]=val;
+         count_measures++;
      }
   }
    event void AMTipsReqMsg.sendDone(message_t *msg, error_t error){
   //Al successo della TipsRequest viene attivato il primo led, in caso di insuccesso si rieffettua un'ulteriore.   
      if(error==SUCCESS)
-        {}
+        {setLeds(1);}
      else {sendTipsRequest(TOS_BCAST_ADDR);}
   }
   event void AMSendTipMsg.sendDone(message_t *msg, error_t error){ 
@@ -146,15 +230,15 @@ implementation{
   In caso di insuccesso si riutilizza il messaggio presente ancora in memoria per rieffettuare un nuovo invio.
   **/
       if(error==SUCCESS){
-        makeTip_running=FALSE;
-       }
+        setLeds(7);
+        makeTip_running=FALSE;}
       else {
        SendTipMsg* stmpkt = (SendTipMsg*)(call Packet.getPayload(msg, sizeof(SendTipMsg)));
-       uint64_t th;
-       uint16_t nonce;
-       th=stmpkt->tipHash;
-       nonce=stmpkt->nonce;
-       sendMakedTip(call AMPacket.destination(msg),nonce,th);
+       uint8_t th[LENGTH_HASH];
+       memcpy(th,stmpkt->tipHash,LENGTH_HASH);
+//     uint16_t nonce=stmpkt->nonce;
+//     sendMakedTip(call AMPacket.source(msg),nonce,th);
+       sendMakedTip(call AMPacket.destination(msg),1,th);
        }
   } 
   
@@ -166,9 +250,22 @@ implementation{
   **/
       if (len == sizeof(TipsResponseMsg)){  
       TipsResponseMsg *trmpkt= (TipsResponseMsg*)payload;
-      uint16_t nonce=computeNonce((uint64_t)trmpkt->tipHash_1,(uint64_t)trmpkt->tipHash_2,(uint16_t)trmpkt->dif,measures);
-      uint64_t p = computeHash((uint64_t)trmpkt->tipHash_1,(uint64_t)trmpkt->tipHash_2,nonce,measures);
-      sendMakedTip(call AMPacket.source(msg),nonce,p);
+//      uint8_t thf[LENGTH_HASH];
+//      memcpy(thf,trmpkt->tipHash_1,LENGTH_HASH);
+    uint8_t th1[LENGTH_HASH];
+    uint8_t th2[LENGTH_HASH];
+    uint8_t thf[LENGTH_HASH];
+    uint8_t dif;
+    uint16_t nonce;
+    uint8_t *p;
+    memcpy(th1,trmpkt->tipHash_1,LENGTH_HASH);
+    memcpy(th2,trmpkt->tipHash_2,LENGTH_HASH);
+    dif=trmpkt->dif;
+    nonce=computeNonce(th1,th2,dif,measures);
+    p = computeHash(th1,th2,nonce,measures);
+    memcpy(thf, *p, 2);
+    sendMakedTip(call AMPacket.source(msg),nonce,thf);
+//      sendMakedTip(call AMPacket.source(msg),1,thf);
       }
     return msg;
   }

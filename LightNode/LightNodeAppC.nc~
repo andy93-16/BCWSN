@@ -1,6 +1,5 @@
 #include <Timer.h>
 #include "LightNode.h"
-#include "Pearson.c"
 
 configuration LightNodeAppC {
 }
