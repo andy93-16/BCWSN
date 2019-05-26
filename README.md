@@ -1,15 +1,16 @@
 # Blockchain on WSN
 
-### Scopo del progetto: Implementazione di una Blockchain per memorizzare misure effettuate da Wireless Sensors
+### Scopo del progetto
+Implementazione di una Blockchain per memorizzare misure effettuate da Wireless Sensors.
 
-##### Alcune definizioni:
-Una Blockchain è, letteralmente, una catena di Blocchi legati tra loro mediante l'hash di un blocco precedente.
+##### Alcune definizioni
+Una Blockchain è letteralmente una catena di Blocchi legati tra loro mediante l'hash di un blocco precedente.
 È un sistema distribuito tra tutti gli utenti che partecipano alla creazione di nuovi blocchi.
 
-##### Problematiche:
+##### Problematiche
 Considerando le notevoli limitazioni hardware dei sensori WSN, si è deciso di porre alcune modifiche all'idea base della blockchain.
 La struttura iniziale della blockchain è stata quindi rivista e sostituita dal DAG (Direct Acyclic Graph) che corrisponde ad un grafo diretto privo di cicli al suo interno per permettere l'inserimento dei blocchi da parte di più nodi allo stesso momento.
-Un'altra scelta, invece, cade alla base dell'algoritmo di consenso, in quanto se normalmente in una blockchain l'impiego del PoW ha sempre potuto risolvere ogni problema, per i dispositivi a disposizione se ne sarebbe creato uno.
+Un'altra scelta, invece, cade alla base dell'algoritmo di consenso in quanto, se normalmente in una blockchain l'impiego del PoW ha sempre potuto risolvere ogni problema, per i dispositivi a disposizione se ne sarebbe creato uno.
 È così che, invece, è stato scelto di ottimizzare il PoW stesso con un meccanismo Credit-Based PoW.
 
 Spunti per questa soluzione sono presenti nel'articolo [1].
@@ -63,13 +64,12 @@ Quindi, si lascia la possibilità di ulteriori implementazioni, che sono element
 	```
   
    dove viene chiaramente espresso l'istanziazione dei componenti adibiti a seconda del caso alle misurazioni.
-   A tal riguardo sarebbe più utile sfruttare direttamente un'interfaccia che non risulta però implementata per
-   la classe di dispositivi utilizzati in fase di test.
+   A tal riguardo sarebbe più utile sfruttare direttamente un'interfaccia che non risulta però implementata per la classe di dispositivi utilizzati in fase di test.
  - ###### Flessibilità degli hash (ToDo):
    Per ragioni relative alle tempistiche di implementazione nei codici rilasciati non è possibile definire una lunghezza degli hash,
    quindi nel caso si volessero utilizzare hash più piccoli o più grandi si dovrebbe ricorrere all'utilizzo di array.
   
-##### Sicurezza del sistema (General ToDo):
+##### Sicurezza del sistema (General ToDo)
  
 Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza.
 Sviluppare un sistema di cifratura leggero da applicare per lo scambio di informazioni richiede un attento studio.
@@ -79,11 +79,11 @@ Nel paper [1] a pagina 5, si discute di un eventuale implementazione che risolve
  
 Il sistema appena descritto è stato implementato sul framework TinyOS, in particolare è stato testato per dispositivi quali telosb e XM1000.
 
-NB: per l'XM1000 che non è supportato dalla versione 2.1.2 è necessaria un'istallazione esterna, vedi 
+Nota: per l'XM1000 che non è supportato dalla versione 2.1.2 è necessaria un'istallazione esterna, vedi 
 https://maitreyanaik.wordpress.com/2015/08/26/tinyos-support-for-xm1000-motes/, inoltre si consiglia, all'interno della pagina, di scaricare il contenuto del link https://github.com/benlammel/Vagrant_TinyOS-2.1.2_msp430-47_XM1000.
 A questo punto, senza seguire le istruzioni presenti nel README, copiare il contenuto della cartella tinyos-2.1.2 direttamente nella directory di istallazione del tinyos nel vostro workspace.
 
-Ora, dando uno sguardo a quelle che sono le App preparate in nesC e in Java, facendo riferimento all'architettura vista prima,
+Ora, dando uno sguardo a quelle che sono le App preparate in nesC e in Java e facendo riferimento all'architettura vista prima,
 troviamo che il LightNode è composto da un'unica applicazione, mentre il FullNode sarà composto da un'app nativa denominata BaseStation
 installata sul mote che funge da ponte tra la trasmissione radio e la serial del PC.
 La BaseStation, quindi, comunicherà con un'applicazione Java denominata FullNode che sfrutta la BS estendendo il MsgReader presente nella sdk java del TinyOS.
@@ -93,12 +93,13 @@ La BaseStation, quindi, comunicherà con un'applicazione Java denominata FullNod
 </p>
  
 
-### LightNodeApp :
+### LightNodeApp
 
   Per ciò che riguarda l'applicazione NesC relativa al LightNode, all'interno della directory è presente un file header dove è possibile definire alcuni parametri per configurare il nodo. Questi parametri sono distinti in parametri globali e locali:
 La distinzioni per parametri locali è stata eseguita per permettere di configurare alcuni valori del nodo sulle misurazioni e sull'esecuzione del task makeTip. 
  - DELTA_TIP (Local): definisce il tempo di attesa massimo per l'invio di un nuovo tipo
- - DELTA_MEASURES (Local): intervallo di tempo tra una rilevazione e l'altra delle temperature
+ - DELTA_MEASURES (Local): intervallo di tempo tra una rilevazione e l'altra delle temperature.
+ 
  È stato utilizzato, invece, il termine globale per indicare tutti quei parametri che anche il FullNode deve conoscere affinché LightNodes e FullNode possano comunicare senza ottenere degli errori.
  Perciò è strettamente necessario che quando vengono modificati questi parametri siano ricompilate entrambe le applicazioni.
  Più avanti verrà spiegato come farlo e come è stato organizzato il makefile.
@@ -144,7 +145,7 @@ Nota: l'inserimento di "MsgClass" dopo -java-classname per specificare la defini
  
 Riguardo al makefile per il LightNode non c'è da spiegare niente di importante. 
   
-### Comunicazione tra le App:
+### Comunicazione tra le App
 
 <p align="center">
 <img src="data/message.png">
@@ -152,8 +153,8 @@ Riguardo al makefile per il LightNode non c'è da spiegare niente di importante.
 
 Il tinyos permette di definire una moltitudine di messaggi a seconda delle esigenze, in questo caso sono state definite tre tipologie di  messaggi (specificata attraverso l'AM_TYPE) che come si può pensare, rappresentano una specie di three-way handshake del tcp:
  - LightNode invia un "SendTipRequestMessage" al FullNode
- - FullNode risponde con un "TipResponseMessage" al LightNode.
- - LightNode una volta completata la PoW invia un "SendTipMessage".
+ - FullNode risponde con un "TipResponseMessage" al LightNode
+ - LightNode una volta completata la PoW invia un "SendTipMessage"
  
 Nota: Rispetto al LightNode, il FullNode non esegue una ACK del messaggio, quindi un messaggio per qualche motivo non consegnato non verrà mai reinviato dal FullNode. Diverso il discorso per il LightNode che, invece, rimane in attesa di una risposta.
 
@@ -165,23 +166,31 @@ I codici presenti nella repository hanno una grande dipendenza dai makerule e da
 uno specifico path per poter essere buildati, installati ed eseguiti (caso del FullNode).
 Per prima cosa è necessario cambiare directory e posizionarsi all'interno della cartella apps del tinyos e poi eseguire il git clone.
 ```
-tinyos@debian:~/tinyos-main/apps$
-git clone https://github.com/andy93-16/BCWSN
+tinyos@debian:~/tinyos-main/apps$ git clone https://github.com/andy93-16/BCWSN
 ```
 Il passo successivo sta nell'installare la LightNodeApp su un mote e per fare ciò è necessario spostarsi all'interno della directory LightNode ed eseguire il seguente comando:
 ```
-make "modellomote" install."idchesivuoleassegnare",/dev/ttyUSBx
+tinyos@debian:~/tinyos-main/apps/BCWSN/LightNode$ make "modellomote" install."idchesivuoleassegnare",/dev/ttyUSBx
 
 # Esempio telosb
-make telosb install.y bsl,/dev/ttyUSBx
+tinyos@debian:~/tinyos-main/apps/BCWSN/LightNode$ make telosb install.y bsl,/dev/ttyUSBx
 ```
 
 Per quanto riguarda il FullNode, è necessario installare su un altro nodo l'app BaseStation (che è nativa nel framework)
-seguendo le stesse istruzione definite prima.
+seguendo i comandi:
+```
+tinyos@debian:~/tinyos-main/apps/BaseStation$ make "modellomote" install."idchesivuoleassegnare",/dev/ttyUSBx
+
+# Esempio telosb
+tinyos@debian:~/tinyos-main/apps/BaseStation$ make telosb install.y bsl,/dev/ttyUSBx
+```
 
 Dopo aver fatto ciò, per inizializzare il FullNode bisogna spostarsi nella directory FullNode ed eseguire:
 ```
-java FullNode -comm serial@/dev/ttyUSBx:"baudrate"
+tinyos@debian:~/tinyos-main/apps/BCWSN/FullNode$ "package" FullNode -comm serial@/dev/ttyUSBx:"baudrate"
+
+# Esempio telosb
+tinyos@debian:~/tinyos-main/apps/BCWSN/FullNode$ java FullNode -comm serial@/dev/ttyUSBx:telosb
 ```
 
 Arrivati a questo punto si dovrebbe avere una situazione simile a quella in foto:
