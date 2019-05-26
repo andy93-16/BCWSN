@@ -103,7 +103,7 @@ La distinzioni per parametri locali è stata eseguita per permettere di configur
  È stato utilizzato, invece, il termine globale per indicare tutti quei parametri che anche il FullNode deve conoscere affinché LightNodes e FullNode possano comunicare senza ottenere degli errori.
  Perciò è strettamente necessario che quando vengono modificati questi parametri siano ricompilate entrambe le applicazioni.
  Più avanti verrà spiegato come farlo e come è stato organizzato il makefile.
- A seguire sono elencate le definizioni:
+ A seguire è elencata la definizione:
  
  - NUM_MEASURES (Global): numero di misurazioni effettuate da inviare (di default è stato scelto un numero di 5 misure per problematiche relative alla grandezza max del payload del messaggio poiche di defalult è imposato fino a 26 byte).
  
@@ -203,11 +203,12 @@ Il FullNode dice di aver ricevuto un TipRequest, il FullNode si mette in attesa 
 Nota: I comandi eseguiti precedentemente sono terminali Linux, per terminali Windows consultare il manuale.
    
 ### Riferimenti   
-[1] - “Towards Secure Industrial IoT: Blockchain System with Credit-Based Consensus Mechanism” a cura di Junqin Huang, Linghe Kong, Senior Member, IEEE, Guihai Chen, Min-You Wu, Xue Liu, Senior Member, IEEE, Peng Zeng.
+[1] “Towards Secure Industrial IoT: Blockchain System with Credit-Based Consensus Mechanism” a cura di Junqin Huang, Linghe Kong, Senior Member, IEEE, Guihai Chen, Min-You Wu, Xue Liu, Senior Member, IEEE, Peng Zeng.
 
-[2] - Qualcosa sui DAG ai link:
- - Molto buono: <https://www.youtube.com/watch?v=CZxH1V_zoug> 
- - Molto meno buono: <https://www.cryptominando.it/2018/04/02/dag-blockchain/>
+[2] Approfondimenti sul DAG:
+ - <https://www.youtube.com/watch?v=CZxH1V_zoug> 
+ - <https://www.cryptominando.it/2018/04/02/dag-blockchain/>
  
-[3] - <https://en.bitcoin.it/wiki/Nonce>
+[3] Approfondimento sul Nonce:
+- <https://en.bitcoin.it/wiki/Nonce>
 
