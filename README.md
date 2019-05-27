@@ -18,7 +18,7 @@ Spunti per questa soluzione sono presenti nel'articolo [1].
 ### Architettura
 
 Il sistema progettato è attualmente centralizzato data la scarsa disponibilità di memoria sui Mote. Esisterà, dunque, un dispositivo differente dagli altri detto FullNode (nel nostro caso un PC), che sarà il cervello dell'intero sistema.
-Il DAG ("tangle") di blocchi che da adesso verranno definiti come "tip" e' la struttura dati su cui si poggerà il FullNode per memorizzare le informazioni ottenuti dai nodi.
+Il DAG ("tangle") di blocchi che da adesso verranno definiti come "tip" è la struttura dati su cui si poggerà il FullNode per memorizzare le informazioni ottenuti dai nodi.
 
 Segue la definizioni dei task eseguiti sui singoli nodi:
 
