@@ -10,7 +10,7 @@ Una Blockchain è letteralmente una catena di Blocchi legati tra loro mediante l
 ##### Problematiche
 Considerando le notevoli limitazioni hardware dei sensori WSN, si è deciso di porre alcune modifiche all'idea base della blockchain.
 La struttura iniziale della blockchain è stata quindi rivista e sostituita dal DAG (Direct Acyclic Graph) che corrisponde ad un grafo diretto privo di cicli al suo interno per permettere l'inserimento dei blocchi da parte di più nodi allo stesso momento.
-Un'altra scelta, invece, cade alla base dell'algoritmo di consenso in quanto, se normalmente in una blockchain l'impiego del PoW ha sempre potuto risolvere ogni problema, per i dispositivi a disposizione se ne sarebbe creato uno.
+Un'altra scelta, invece, cade alla base dell'algoritmo di consenso in quanto, se normalmente in una blockchain l'impiego del PoW ha sempre potuto risolvere ogni problema, per i dispositivi in nostro possesso se ne sarebbe creato uno.
 È così che, invece, è stato scelto di ottimizzare il PoW stesso con un meccanismo Credit-Based PoW.
 
 Spunti per questa soluzione sono presenti nel'articolo [1].
@@ -18,7 +18,7 @@ Spunti per questa soluzione sono presenti nel'articolo [1].
 ### Architettura
 
 Il sistema progettato è attualmente centralizzato data la scarsa disponibilità di memoria sui Mote. Esisterà, dunque, un dispositivo differente dagli altri detto FullNode (nel nostro caso un PC), che sarà il cervello dell'intero sistema.
-Il DAG ("tangle") di blocchi che da adesso verranno definiti come "tip" è la struttura dati su cui si poggerà il FullNode per memorizzare le informazioni ottenuti dai nodi.
+Il DAG ("tangle") di blocchi (o anche definiti come "tip") è la struttura dati su cui si poggerà il FullNode per memorizzare le informazioni ottenuti dai nodi.
 
 Segue la definizioni dei task eseguiti sui singoli nodi:
 
