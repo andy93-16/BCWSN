@@ -52,11 +52,10 @@ Quindi, si lascia la possibilità di ulteriori implementazioni, che sono element
  - Calcolo dell'hash complessivo di {moteID, Misurazioni,  prevHash1,  prevHash2, nonce}:
     - Il moteID rappresenta un ID univoco per ogni sensore WSN
     - PrevHash1, PrevHash2 rappresentano hash relativi ai blocchi del DAG attaccati per la creazione del nuovo blocco
-    - Il nonce è un numero intero che provvede alla generazione di nuovi hash
-     Maggiori informazioni sui nonce si possono trovare su [3]
+    - Il nonce è un numero intero che provvede alla generazione di nuovi hash. Maggiori informazioni sui nonce si possono trovare in [3]
  - Costruzione del nuovo blocco ed invio al FullNode
- - ##### Warning compilazione (ToDo):
-   Nell'implementazione il file LightNodeApp.nc contiene delle righe:
+ - ###### Warning compilazione (ToDo):
+   Nell'implementazione il file LightNodeApp.nc contiene le seguenti linee:
 	```
 	components new SensirionSht11C() as TempHumSensor;
 	//components new HamamatsuS10871TsrC() as LightSensor;
@@ -64,12 +63,12 @@ Quindi, si lascia la possibilità di ulteriori implementazioni, che sono element
 	```
   
    dove viene chiaramente espresso l'istanziazione dei componenti adibiti a seconda del caso alle misurazioni.
-   A tal riguardo sarebbe più utile sfruttare direttamente un'interfaccia che non risulta però implementata per la classe di dispositivi utilizzati in fase di test.
+   A tal riguardo sarebbe più utile poter sfruttare direttamente un'interfaccia (che però non risulta implementata per la classe di dispositivi utilizzati in fase di test).
  - ###### Flessibilità degli hash (ToDo):
-   Per ragioni relative alle tempistiche di implementazione nei codici rilasciati non è possibile definire una lunghezza degli hash,
+   Per ragioni relative alle tempistiche di implementazione nei codici rilasciati non è possibile definire una lunghezza fissa degli hash,
    quindi nel caso si volessero utilizzare hash più piccoli o più grandi si dovrebbe ricorrere all'utilizzo di array.
   
-##### Sicurezza del sistema (General ToDo)
+###### Sicurezza del sistema (General ToDo)
  
 Data la complessità nello gestire le chiavi private, pubbliche e conseguente cifratura dei messaggi, tale parte del progetto non è stata sviluppata. I LightNode dispongono di risorse minimali per quanto riguarda la sicurezza.
 Sviluppare un sistema di cifratura leggero da applicare per lo scambio di informazioni richiede un attento studio.
@@ -84,8 +83,7 @@ https://maitreyanaik.wordpress.com/2015/08/26/tinyos-support-for-xm1000-motes/, 
 A questo punto, senza seguire le istruzioni presenti nel README, copiare il contenuto della cartella tinyos-2.1.2 direttamente nella directory di istallazione del tinyos nel vostro workspace.
 
 Ora, dando uno sguardo a quelle che sono le App preparate in nesC e in Java e facendo riferimento all'architettura vista prima,
-troviamo che il LightNode è composto da un'unica applicazione, mentre il FullNode sarà composto da un'app nativa denominata BaseStation
-installata sul mote che funge da ponte tra la trasmissione radio e la serial del PC.
+troviamo che il LightNode è composto da un'unica applicazione, mentre il FullNode sarà composto da un'app nativa denominata BaseStation (BS in breve) installata sul mote che funge da ponte tra la trasmissione radio e la serial del PC.
 La BaseStation, quindi, comunicherà con un'applicazione Java denominata FullNode che sfrutta la BS estendendo il MsgReader presente nella sdk java del TinyOS.
 
 <p align="center">
@@ -95,7 +93,7 @@ La BaseStation, quindi, comunicherà con un'applicazione Java denominata FullNod
 
 ### LightNodeApp
 
-  Per ciò che riguarda l'applicazione NesC relativa al LightNode, all'interno della directory è presente un file header dove è possibile definire alcuni parametri per configurare il nodo. Questi parametri sono distinti in parametri globali e locali:
+  Perciò che riguarda l'applicazione NesC relativa al LightNode, all'interno della directory è presente un file header dove è possibile definire alcuni parametri per configurare il nodo. Questi parametri sono distinti in parametri globali e locali:
 La distinzioni per parametri locali è stata eseguita per permettere di configurare alcuni valori del nodo sulle misurazioni e sull'esecuzione del task makeTip. 
  - DELTA_TIP (Local): definisce il tempo di attesa massimo per l'invio di un nuovo tipo
  - DELTA_MEASURES (Local): intervallo di tempo tra una rilevazione e l'altra delle temperature.
