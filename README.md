@@ -35,7 +35,7 @@ Quindi, si lascia la possibilità di ulteriori implementazioni, che sono element
    credibilità del LightNode ed, eventualmente, aggiungere il Blocco al DAG se tutti i controlli sono risultati soddisfacenti.
    
   - ###### Credit-Based PoW Mechanism (ToDo):
-  Sulla base di voler assegnare una difficoltà maggiore o minore a seconda del comportamento del nodo (in modo da evitare elementi malevoli nel gruppo dei LightNode) sarebbe doveroso implementare un algoritmo che segue delle regole particolari per l'assegnazione. Un'idea di come poter sviluppare quanto appena descritto la si può trovare a pagina 4, capitolo "B. Credit-Based PoW Mechanism" nel paper [1].
+   Sulla base di voler assegnare una difficoltà maggiore o minore a seconda del comportamento del nodo (in modo da evitare elementi malevoli nel gruppo dei LightNode) sarebbe doveroso implementare un algoritmo che segue delle regole particolari per l'assegnazione. Un'idea di come poter sviluppare quanto appena descritto la si può trovare a pagina 4, capitolo "B. Credit-Based PoW Mechanism" nel paper [1].
 
  - ###### Ricerca blocchi più recenti (ToDo):
    Nell'implementazione reale di un DAG, gli hash da inviare devono corrispondere ai blocchi meno utilizzati all'interno del DAG 
