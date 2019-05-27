@@ -141,7 +141,7 @@ In breve, viene definito il path al LightNode.h e, differentemente dalla norma, 
 
 Nota: l'inserimento di "MsgClass" dopo -java-classname per specificare la definizione del package.
  
-Riguardo al makefile per il LightNode non c'è da spiegare niente di importante. 
+Riguardo al makefile per il LightNode non ci sono informazioni rilevanti da riportare. 
   
 ### Comunicazione tra le App
 
@@ -149,14 +149,14 @@ Riguardo al makefile per il LightNode non c'è da spiegare niente di importante.
 <img src="data/message.png">
 </p>
 
-Il tinyos permette di definire una moltitudine di messaggi a seconda delle esigenze, in questo caso sono state definite tre tipologie di  messaggi (specificata attraverso l'AM_TYPE) che come si può pensare, rappresentano una specie di three-way handshake del tcp:
+Il tinyos permette di definire una moltitudine di messaggi a seconda delle esigenze, in questo caso sono state definite tre tipologie di  messaggi (specificata attraverso l'AM_TYPE) che come si può pensare, rappresentano una specie di three-way handshake del TCP:
  - LightNode invia un "SendTipRequestMessage" al FullNode
  - FullNode risponde con un "TipResponseMessage" al LightNode
  - LightNode una volta completata la PoW invia un "SendTipMessage"
  
-Nota: Rispetto al LightNode, il FullNode non esegue una ACK del messaggio, quindi un messaggio per qualche motivo non consegnato non verrà mai reinviato dal FullNode. Diverso il discorso per il LightNode che, invece, rimane in attesa di una risposta.
+Nota: Rispetto al LightNode, il FullNode non esegue un ACK del messaggio, quindi un messaggio per qualche motivo non consegnato al LightNode non verrà mai reinviato dal FullNode. Diverso il discorso per il LightNode che, invece, rimane in attesa di una risposta.
 
-Inoltre, faccio nota che il LightNode in ogni TipRequest invia una broadcast e solo successivamnete alla risposta da parte del FullNode e conseguente conoscenza della suo ID, inserisce la destinazione del messaggio.
+Inoltre, facciamo presente che il LightNode, invia ogni TipRequest in broadcast e, successivamente alla risposta da parte del FullNode e conseguente conoscenza del suo ID, inserisce la destinazione corretta nel SendTipMessage (inviato in unicast).
 
 ### Istruzioni sull'uso
 
@@ -196,7 +196,7 @@ Arrivati a questo punto si dovrebbe avere una situazione simile a quella in foto
 <img src="data/screen.png">
 </p>
 dove è visibilmente chiaro che il nostro sistema è composto da un LightNode che comunica sequenzialmente con il FullNode.
-Il FullNode dice di aver ricevuto un TipRequest, il FullNode si mette in attesa di una SendTip e la riceve con conseguente stampa.
+Il FullNode dice di aver ricevuto un TipRequestMessage, il FullNode si mette in attesa di una SendTipMessage e la riceve con conseguente stampa.
 
 Nota: I comandi eseguiti precedentemente sono terminali Linux, per terminali Windows consultare il manuale.
    
