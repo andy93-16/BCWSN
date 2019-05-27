@@ -105,7 +105,7 @@ La distinzioni per parametri locali è stata eseguita per permettere di configur
  Più avanti verrà spiegato come farlo e come è stato organizzato il makefile.
  A seguire è elencata la definizione:
  
- - NUM_MEASURES (Global): numero di misurazioni effettuate da inviare (di default è stato scelto un numero di 5 misure per problematiche relative alla grandezza max del payload del messaggio poiche di defalult è imposato fino a 26 byte).
+ - NUM_MEASURES (Global): numero di misurazioni effettuate da inviare (di default è stato scelto un numero di 5 misure per problematiche relative alla grandezza max del payload del messaggio poiche di defalult è impostato fino a 26 byte).
  
 ##### Makefile per FullNode
 
